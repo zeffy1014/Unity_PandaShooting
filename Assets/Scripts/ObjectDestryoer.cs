@@ -19,6 +19,9 @@ public class ObjectDestryoer : MonoBehaviour
     {
         Destroy(other.gameObject);
 
+        // コンボ切れる
+        gameController.SendMessage("BreakCombo", SendMessageOptions.DontRequireReceiver);
+
         // ゲームオーバーのトリガーとなるオブジェクトに触れた場合
         if (isDeadLine)
         {

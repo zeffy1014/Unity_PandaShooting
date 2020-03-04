@@ -18,12 +18,19 @@ public class GameController : MonoBehaviour
 
     State state;
 
+    public int baseScore;
+    public int bonusScore;
+
     public PlayerController player;
     public EnemyGenerator generator;
     public Text scoreLabel;
+    public Text comboLabel;
     public Text stateLabel;
+    public Button retryButton;
+    public Button titleButton;
 
     int score = 0;
+    int combo = 0;
     float counter = DisplayGoSec;
 
     public AudioClip gamestartSE;
@@ -38,6 +45,9 @@ public class GameController : MonoBehaviour
         EntryReady();
 
         audioSource = GetComponent<AudioSource>();
+
+        // ハイスコア無かったら0で作成
+        if (!PlayerPrefs.HasKey("HighScore")) PlayerPrefs.SetInt("HighScore", 0);
     }
 
     void LateUpdate()
@@ -51,36 +61,16 @@ public class GameController : MonoBehaviour
                 color.a = Mathf.Sin(Time.time * 5.0f);
                 stateLabel.color = color;
 
-                // キーボード押すかタッチしたらゲームスタート
-                if ((Input.GetButtonDown("Fire1"))
-                    || (Input.GetKeyDown(KeyCode.Space))
-                    || (Input.GetKeyDown(KeyCode.LeftArrow))
-                    || (Input.GetKeyDown(KeyCode.RightArrow)))
-                {
-                    EntryPlay();
-                }
+                // 何か押したらスタート
+                if (Input.anyKey) EntryPlay();
                 break;
             case State.Play:
                 // 死亡したらゲームオーバー
                 if (0 >= player.Life) EntryGameOver();
                 break;
             case State.GameOver:
-                // タッチしたらシーン再読み込み
-                if ((Input.GetButtonDown("Fire1"))
-                    || (Input.GetKeyDown(KeyCode.Space))
-                    || (Input.GetKeyDown(KeyCode.LeftArrow))
-                    || (Input.GetKeyDown(KeyCode.RightArrow)))
-                {
-                    ReloadScene();
-                }
-                break;
+                 break;
         }
-    }
-
-    // シーンを再読み込み
-    void ReloadScene()
-    {
-        UnityEngine.SceneManagement.SceneManager.LoadScene(0); // Sceneひとつだけなので0で
     }
 
     // スコア加算
@@ -89,12 +79,26 @@ public class GameController : MonoBehaviour
         // ゲームオーバーでなければ加算
         if (State.GameOver != state)
         {
-            score++;
+            // スコアとコンボ追加
+            // スコア計算式: 基礎点 + コンボ数*ボーナス点
+            score += (baseScore + combo * bonusScore);
             scoreLabel.text = "Score : " + score;
+            combo++;
+            comboLabel.text = "Combo : " + combo;
+
+            // ハイスコア更新
+            if (PlayerPrefs.GetInt("HighScore") < score) PlayerPrefs.SetInt("HighScore", score);
 
             // 音も鳴らす
             audioSource.PlayOneShot(defeatSE);
         }
+    }
+
+    // コンボ切れ
+    public void BreakCombo()
+    {
+        combo = 0;
+        comboLabel.text = "Combo : " + combo;
     }
 
     // ゲームオーバー…
@@ -133,9 +137,14 @@ public class GameController : MonoBehaviour
 
         // ラベルを更新
         scoreLabel.text = "Score : " + 0;
+        comboLabel.text = "Combo : " + 0;
 
         stateLabel.gameObject.SetActive(true);
         stateLabel.text = "よーい";
+
+        // ボタンは非表示
+        retryButton.gameObject.SetActive(false);
+        titleButton.gameObject.SetActive(false);
     }
 
     void EntryPlay()
@@ -161,5 +170,12 @@ public class GameController : MonoBehaviour
 
         // 音をならす
         audioSource.PlayOneShot(gameoverSE);
+
+        // ハイスコアを保存(念のため)
+        PlayerPrefs.Save();
+
+        // ボタンを表示する
+        retryButton.gameObject.SetActive(true);
+        titleButton.gameObject.SetActive(true);
     }
 }
