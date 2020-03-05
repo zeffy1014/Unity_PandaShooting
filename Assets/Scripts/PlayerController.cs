@@ -18,6 +18,8 @@ public class PlayerController : MonoBehaviour
     public AudioClip damageSE;
     AudioSource audioSource;
 
+    GameObject gameController;
+
     // 移動範囲制限のための決め打ち画面範囲
     float screenWidth = 5.0f;
     float screenHeight = 10.0f;
@@ -26,6 +28,8 @@ public class PlayerController : MonoBehaviour
     {
         Life = defaultLife;
         audioSource = GetComponent<AudioSource>();
+
+        gameController = GameObject.FindWithTag("GameController");
     }
 
     // Update is called once per frame
@@ -69,6 +73,9 @@ public class PlayerController : MonoBehaviour
 
             Life--;
             lifePanel.UpdateLife(Life);
+
+            // コンボ切れる
+            gameController.SendMessage("BreakCombo", SendMessageOptions.DontRequireReceiver);
 
             if (0 >= Life) gameObject.SetActive(false); // Destroy(gameObject);
         }
