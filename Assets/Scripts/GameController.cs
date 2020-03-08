@@ -8,15 +8,7 @@ public class GameController : MonoBehaviour
     const float DisplayGoSec = 1.5f;
     const float CountDownSpan = 0.1f;
 
-    // ゲームステート
-    enum State
-    {
-        Ready,
-        Play,
-        GameOver
-    };
-
-    State state;
+    GameState.State state = GameState.State.None;
 
     public int baseScore;
     public int bonusScore;
@@ -48,6 +40,9 @@ public class GameController : MonoBehaviour
 
         // ハイスコア無かったら0で作成
         if (!PlayerPrefs.HasKey("HighScore")) PlayerPrefs.SetInt("HighScore", 0);
+
+        // カーソルを出さないようにする
+        Cursor.lockState = CursorLockMode.Confined;
     }
 
     void LateUpdate()
@@ -55,7 +50,7 @@ public class GameController : MonoBehaviour
         // 状態ごとにイベント監視
         switch (state)
         {
-            case State.Ready:
+            case GameState.State.Ready:
                 // ラベルを点滅
                 Color color = stateLabel.color;
                 color.a = Mathf.Sin(Time.time * 5.0f);
@@ -64,11 +59,11 @@ public class GameController : MonoBehaviour
                 // 何か押したらスタート
                 if (Input.anyKey) EntryPlay();
                 break;
-            case State.Play:
+            case GameState.State.Play:
                 // 死亡したらゲームオーバー
                 if (0 >= player.Life) EntryGameOver();
                 break;
-            case State.GameOver:
+            case GameState.State.GameOver:
                  break;
         }
     }
@@ -77,7 +72,7 @@ public class GameController : MonoBehaviour
     public void IncreaseScore()
     {
         // ゲームオーバーでなければ加算
-        if (State.GameOver != state)
+        if (GameState.State.GameOver != state)
         {
             // スコアとコンボ追加
             // スコア計算式: 基礎点 + コンボ数*ボーナス点
@@ -104,7 +99,7 @@ public class GameController : MonoBehaviour
     // ゲームオーバー…
     void GameIsOver()
     {
-        if (State.Play == state) player.ForceGameOver();
+        if (GameState.State.Play == state) player.ForceGameOver();
     }
 
     // 一定時間GO表示する
@@ -133,7 +128,8 @@ public class GameController : MonoBehaviour
     /* 各種状態入場処理 */
     void EntryReady()
     {
-        state = State.Ready;
+        state = GameState.State.Ready;
+        player.State = GameState.State.Ready;
 
         // ラベルを更新
         scoreLabel.text = "Score : " + 0;
@@ -145,12 +141,16 @@ public class GameController : MonoBehaviour
         // ボタンは非表示
         retryButton.gameObject.SetActive(false);
         titleButton.gameObject.SetActive(false);
+
+        // カーソル非表示
+        Cursor.visible = false;
+
     }
 
     void EntryPlay()
     {
-        state = State.Play;
-        player.Playing = true;
+        state = GameState.State.Play;
+        player.State = GameState.State.Play;
         generator.GameStart();
 
         // 音をならす
@@ -158,11 +158,16 @@ public class GameController : MonoBehaviour
 
         // 一定時間文字表示してから消す
         StartCoroutine(DisplayGO());
+
+        // カーソル非表示
+        Cursor.visible = false;
+
     }
 
     void EntryGameOver()
     {
-        state = State.GameOver;
+        state = GameState.State.GameOver;
+        player.State = GameState.State.GameOver;
 
         // ラベルを更新
         stateLabel.gameObject.SetActive(true);
@@ -177,5 +182,8 @@ public class GameController : MonoBehaviour
         // ボタンを表示する
         retryButton.gameObject.SetActive(true);
         titleButton.gameObject.SetActive(true);
+
+        // カーソルを表示する
+        Cursor.visible = true;
     }
 }
