@@ -97,7 +97,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fallSpeedBase: 3
-  rotateSpeedBase: 100
   enemySprites:
   - {fileID: 6411998509940877570, guid: cc8ecf146826a7d49a42dc94c8344c94, type: 3}
   - {fileID: 5091634072379964241, guid: cc8ecf146826a7d49a42dc94c8344c94, type: 3}
@@ -138,4 +137,4 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.35
+  m_Radius: 0.25

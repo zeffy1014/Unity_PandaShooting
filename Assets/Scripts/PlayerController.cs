@@ -2,18 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-using System.Runtime.InteropServices;
-
-// Windowsでマウスカーソルを動かしたい
-/* とりあえず使わない
-#if UNITY_STANDALONE_WIN
-public class Win32API
-{
-    [DllImport("User32.Dll")]
-    public static extern long SetCursorPos(int x, int y);
-}
-#endif
-*/
 
 public class PlayerController : MonoBehaviour
 {
@@ -51,24 +39,25 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // EditorまたはWindowsだったらマウス入力
-        // Androidだったらタッチ入力
-        #if UNITY_EDITOR
-            OnMouseOperation();
-        #elif UNITY_STANDALONE_WIN
-            OnMouseOperation();
-        #elif UNITY_ANDROID
+        // EditorまたはWindowsだったらマウス移動+クリック検出
+        // Androidだったらタッチによる移動操作検出
+
+        // TODO: どちらもタッチ情報として取得できるように工夫したい
+        if (PlatformInfo.IsMobile())
+        {
             OnTouchOperation();
-        #else
-            // Do Nothing
-        #endif
+        }
+        else
+        {
+            OnMouseOperation();
+        }
     }
 
     private void OnMouseOperation()
     {
         // マウス位置に従い自機移動
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, distanceToCamera));
-        Debug.Log(mousePos);
+        //Debug.Log(mousePos);
 
         // 画面からは出さない範囲で
         if (screenWidth / 2 < mousePos.x) mousePos.x = screenWidth / 2;
@@ -84,24 +73,29 @@ public class PlayerController : MonoBehaviour
             // マウス左クリックで弾を出す
             if (Input.GetMouseButtonDown(0))
             {
-                Vector3 genPos = transform.position;
-                genPos.y += 1.0f;
-                Vector3 genRot = transform.rotation.eulerAngles;
-                genRot.z += 360.0f * Random.value;
-
-                // 弾生成
-                Instantiate<GameObject>(bullet, genPos, Quaternion.Euler(genRot));
-                // 音も出す
-                audioSource.PlayOneShot(shotSE);
+                ShotBullet();
             }
         }
     }
 
-    private void OnTouchOperateion()
+    private void OnTouchOperation()
     {
 
     }
 
+    public void ShotBullet()
+    {
+        Vector3 genPos = transform.position;
+        genPos.y += 1.0f;
+        Vector3 genRot = transform.rotation.eulerAngles;
+        genRot.z += 360.0f * Random.value;
+
+        // 弾生成
+        Instantiate<GameObject>(bullet, genPos, Quaternion.Euler(genRot));
+        // 音も出す
+        audioSource.PlayOneShot(shotSE);
+
+    }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -120,7 +114,8 @@ public class PlayerController : MonoBehaviour
             // コンボ切れる
             gameController.SendMessage("BreakCombo", SendMessageOptions.DontRequireReceiver);
 
-            if (0 >= Life) gameObject.SetActive(false); // Destroy(gameObject);
+            // ライフ無くなったらGameOver処理してもらう
+            if (0 >= Life) gameController.SendMessage("GameIsOver", SendMessageOptions.DontRequireReceiver);
         }
     }
 

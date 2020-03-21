@@ -20,6 +20,8 @@ public class GameController : MonoBehaviour
     public Text stateLabel;
     public Button retryButton;
     public Button titleButton;
+    public Button shotButton;
+    public Toggle debugMode;
 
     int score = 0;
     int combo = 0;
@@ -43,6 +45,14 @@ public class GameController : MonoBehaviour
 
         // カーソルを出さないようにする
         Cursor.lockState = CursorLockMode.Confined;
+
+        // Shotボタンはモバイル環境だけ有効にする
+        Debug.Log("IsMobile: " + PlatformInfo.IsMobile());
+        shotButton.gameObject.SetActive(PlatformInfo.IsMobile());
+
+        // Debug ModeのToggleはEditor使用時のみ表示する
+        debugMode.gameObject.SetActive(Application.isEditor);
+        debugMode.GetComponent<Toggle>().isOn = Application.isEditor;
     }
 
     void LateUpdate()
@@ -60,8 +70,8 @@ public class GameController : MonoBehaviour
                 if (Input.anyKey) EntryPlay();
                 break;
             case GameState.State.Play:
-                // 死亡したらゲームオーバー
-                if (0 >= player.Life) EntryGameOver();
+                // 死亡したらゲームオーバー(Debug Modeでなければ)
+                if (0 >= player.Life && !debugMode.isOn) EntryGameOver();
                 break;
             case GameState.State.GameOver:
                  break;
@@ -99,7 +109,8 @@ public class GameController : MonoBehaviour
     // ゲームオーバー…
     void GameIsOver()
     {
-        if (GameState.State.Play == state) player.ForceGameOver();
+        // Debug Mode中でなければゲームオーバー
+        if (!debugMode.isOn) if (GameState.State.Play == state) player.ForceGameOver();
     }
 
     // 一定時間GO表示する
