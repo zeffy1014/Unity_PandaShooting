@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float distanceToCamera = 10.0f; //カメラとプレイヤーの距離
+    public float touchMoveSense = 5.0f; //タッチ操作による移動距離調整用感度
 
     public GameObject bullet;
     public GameObject damageEffect;
@@ -20,6 +20,8 @@ public class PlayerController : MonoBehaviour
     public AudioClip shotSE;
     public AudioClip damageSE;
     AudioSource audioSource;
+
+    public TouchController touchContoller;
 
     GameObject gameController;
 
@@ -39,10 +41,8 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // EditorまたはWindowsだったらマウス移動+クリック検出
-        // Androidだったらタッチによる移動操作検出
-
-        // TODO: どちらもタッチ情報として取得できるように工夫したい
+        // Android or iPhoneだったらタッチによる移動操作検出
+        // それ以外はマウスによる移動操作　ただしUnity Remoteは携帯端末扱いでタッチ操作
         if (PlatformInfo.IsMobile())
         {
             OnTouchOperation();
@@ -55,17 +55,17 @@ public class PlayerController : MonoBehaviour
 
     private void OnMouseOperation()
     {
-        // マウス位置に従い自機移動
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, distanceToCamera));
-        //Debug.Log(mousePos);
+        // マウス位置(スクリーン座標)をワールド座標へ変換
+        Vector3 mousePosW = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, TouchController.distanceToCamera));
+        //Debug.Log(Input.mousePosition + "->" + mousePosW);
 
-        // 画面からは出さない範囲で
-        if (screenWidth / 2 < mousePos.x) mousePos.x = screenWidth / 2;
-        if (-screenWidth / 2 > mousePos.x) mousePos.x = -screenWidth / 2;
-        if (screenHeight / 2 < mousePos.y) mousePos.y = screenHeight / 2;
-        if (-screenHeight / 2 > mousePos.y) mousePos.y = -screenHeight / 2;
+        // 画面からは出さない範囲で自機移動
+        if (screenWidth / 2 < mousePosW.x) mousePosW.x = screenWidth / 2;
+        if (-screenWidth / 2 > mousePosW.x) mousePosW.x = -screenWidth / 2;
+        if (screenHeight / 2 < mousePosW.y) mousePosW.y = screenHeight / 2;
+        if (-screenHeight / 2 > mousePosW.y) mousePosW.y = -screenHeight / 2;
 
-        transform.position = mousePos;
+        transform.position = mousePosW;
 
         // プレイ中のみの動作
         if (GameState.State.Play == State)
@@ -80,6 +80,32 @@ public class PlayerController : MonoBehaviour
 
     private void OnTouchOperation()
     {
+        // 移動用タッチの情報取得
+        Touch touchPos = new Touch();
+        if (true == touchContoller.GetMoveTouch(ref touchPos))
+        {
+            // 移動していたら移動量(感度用設定値を加味)を加算して移動先座標を得る
+            if (TouchPhase.Moved == touchPos.phase)
+            {
+                Vector2 newPos = new Vector2();
+                newPos.x = touchPos.deltaPosition.x / touchMoveSense * Time.deltaTime + transform.position.x;
+                newPos.y = touchPos.deltaPosition.y / touchMoveSense * Time.deltaTime + transform.position.y;
+
+                //Debug.Log(transform.position + "->" + newPos);
+
+                // 画面からは出さない範囲で自機移動
+                if (screenWidth / 2 < newPos.x) newPos.x = screenWidth / 2;
+                if (-screenWidth / 2 > newPos.x) newPos.x = -screenWidth / 2;
+                if (screenHeight / 2 < newPos.y) newPos.y = screenHeight / 2;
+                if (-screenHeight / 2 > newPos.y) newPos.y = -screenHeight / 2;
+
+                transform.position = newPos;
+            }
+        }
+        else
+        {
+            // 何もしない
+        }
 
     }
 

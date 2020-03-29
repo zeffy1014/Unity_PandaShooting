@@ -32,8 +32,11 @@ public class PlatformInfo
 {
     static readonly bool isAndroid = Application.platform == RuntimePlatform.Android;
     static readonly bool isIOS = Application.platform == RuntimePlatform.IPhonePlayer;
-    static readonly bool isMobile = isAndroid || isIOS;
 
-    public static bool IsMobile() { return isMobile; }
+    public static bool IsMobile() {
+        // AndroidかiOSか、あるいはUnity RemoteだったらMobile扱いとする
+        bool ret = isAndroid || isIOS || UnityEditor.EditorApplication.isRemoteConnected;
+        return ret;
+    }
 
 }

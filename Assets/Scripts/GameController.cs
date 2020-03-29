@@ -23,6 +23,8 @@ public class GameController : MonoBehaviour
     public Button shotButton;
     public Toggle debugMode;
 
+    bool isMobile = false;
+
     int score = 0;
     int combo = 0;
     float counter = DisplayGoSec;
@@ -47,12 +49,22 @@ public class GameController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Confined;
 
         // Shotボタンはモバイル環境だけ有効にする
-        Debug.Log("IsMobile: " + PlatformInfo.IsMobile());
-        shotButton.gameObject.SetActive(PlatformInfo.IsMobile());
+        isMobile = PlatformInfo.IsMobile();
+        shotButton.gameObject.SetActive(isMobile);
 
         // Debug ModeのToggleはEditor使用時のみ表示する
         debugMode.gameObject.SetActive(Application.isEditor);
         debugMode.GetComponent<Toggle>().isOn = Application.isEditor;
+    }
+
+    private void Update()
+    {
+        // Unity Remoteは起動直後に接続確認できないので再確認
+        if (Application.isEditor && !isMobile)
+        {
+            isMobile = PlatformInfo.IsMobile();
+            shotButton.gameObject.SetActive(isMobile);
+        }
     }
 
     void LateUpdate()

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class TouchController : MonoBehaviour
 {
+    public static float distanceToCamera = 10.0f; //カメラとプレイヤーの距離
+
     static List<Rect> operateAreaList = new List<Rect>();  // 操作用ボタン範囲リスト
 
     int touchNum = 0; // 現在タッチされている数
@@ -13,20 +15,26 @@ public class TouchController : MonoBehaviour
     // 操作用ボタン範囲指定(移動用タッチ範囲外にするため)
     static public void SetOperateArea(Transform button)
     {
-        Debug.Log(button.localPosition);
+        Debug.Log("SetOperateArea input button pos: " + button.position);
+        // 左下
+        Vector3 lb = new Vector3(button.position.x + button.GetComponent<RectTransform>().rect.xMin, button.position.y + button.GetComponent<RectTransform>().rect.yMin);
+        //Debug.Log("SetOperateArea input button left-bottom: " + lb);
+        // 右上
+        Vector3 rt = new Vector3(button.position.x + button.GetComponent<RectTransform>().rect.xMax, button.position.y + button.GetComponent<RectTransform>().rect.yMax);
+        //Debug.Log("SetOperateArea input button right-top: " + rt);
 
-        // 渡されたオブジェクトの範囲を覚えておく
-        Rect rect = new Rect();
-        rect.xMin = button.localPosition.x + button.GetComponent<RectTransform>().rect.xMin;
-        rect.yMin = button.localPosition.y + button.GetComponent<RectTransform>().rect.yMin;
-        rect.xMax = button.localPosition.x + button.GetComponent<RectTransform>().rect.xMax;
-        rect.yMax = button.localPosition.y + button.GetComponent<RectTransform>().rect.yMax;
+        // 渡された範囲を保持する
+        Rect rect = new Rect(lb.x, lb.y, rt.x - lb.x, rt.y - lb.y);
         operateAreaList.Add(rect);
+
+        Debug.Log("SetOperateArea area: " + rect.position);
     }
 
     // 操作用ボタン範囲かどうか判定
     bool IsInOperateArea(Vector2  pos)
     {
+        //Debug.Log("IsInOperateArea touch pos: " + pos);
+
         bool ret = false;
         foreach (Rect area in operateAreaList)
         {
@@ -69,6 +77,7 @@ public class TouchController : MonoBehaviour
                     case TouchPhase.Canceled:
                     default:
                         // 移動用タッチ情報をクリアして先に進む
+                        Debug.Log("Finger for move has released.");
                         moveTouchIndex = moveFingerID = -1;
                         break;
                 }
@@ -90,66 +99,43 @@ public class TouchController : MonoBehaviour
                 // タッチ開始だったらそれを移動用タッチとして保持して終了
                 if(TouchPhase.Began == touch.phase)
                 {
+                    Debug.Log("Here comes a new finger for move! Index:" + i + ", FingerID:" + touch.fingerId );
                     moveTouchIndex = i;
                     moveFingerID = touch.fingerId;
                     return;
                 }
             }
+            else
+            {
+                if (Application.isEditor)
+                {
+                    // タッチ開始でも範囲外だったら保持しない(ログ出力用にEditorの場合だけ一応見ておく)
+                    if (TouchPhase.Began == touch.phase)
+                        Debug.Log("Touch has began, but out of range...");
+                }
+            }
         }
     }
 
-    /* タッチ操作 */
-    public static TouchPhase GetTouchInfo(int index)
+    /* 移動用タッチ取得 */
+    /* 引数  : [out]移動用タッチ情報を格納(戻り値がtrueの場合のみ使用すること)
+    /* 戻り値: タッチ取得できたらtrue, できないならfalse */
+    public bool GetMoveTouch(ref Touch retTouch)
     {
-        if (PlatformInfo.IsMobile())
+        if (-1 != moveTouchIndex)
         {
-            if (Input.GetMouseButtonDown(index)) { return TouchPhase.Began; }
-            if (Input.GetMouseButton(index)) { return TouchPhase.Moved; }
-            if (Input.GetMouseButtonUp(index)) { return TouchPhase.Ended; }
+            // 移動用タッチ情報が取得できる
+            retTouch = Input.GetTouch(moveTouchIndex);
+            return true;
         }
         else
         {
-            if (Input.touchCount > 0)
-            {
-                return Input.GetTouch(index).phase;
-            }
+            // 移動用タッチ情報が無いので無効値などセット
+            retTouch.position = Vector2.zero;
+            retTouch.phase = TouchPhase.Canceled;
+            return false;
         }
-        return TouchPhase.Canceled;
     }
-    /*
-    /// <summary>
-    /// タッチポジションを取得(エディタと実機を考慮)
-    /// </summary>
-    /// <returns>タッチポジション。タッチされていない場合は (0, 0, 0)</returns>
-    public static Vector3 GetTouchPosition()
-    {
-    if (AppConst.IsEditor)
-    {
-    TouchInfo touch = AppUtil.GetTouch();
-    if (touch != TouchInfo.None) { return Input.mousePosition; }
-    }
-    else
-    {
-    if (Input.touchCount > 0)
-    {
-        Touch touch = Input.GetTouch(0);
-        TouchPosition.x = touch.position.x;
-        TouchPosition.y = touch.position.y;
-        return TouchPosition;
-    }
-    }
-        return Vector3.zero;
-    }
-
-    /// <summary>
-    /// タッチワールドポジションを取得(エディタと実機を考慮)
-    /// </summary>
-    /// <param name='camera'>カメラ</param>
-    /// <returns>タッチワールドポジション。タッチされていない場合は (0, 0, 0)</returns>
-    public static Vector3 GetTouchWorldPosition(Camera camera)
-    {
-        return camera.ScreenToWorldPoint(GetTouchPosition());
-    }*/
 
 }
 
