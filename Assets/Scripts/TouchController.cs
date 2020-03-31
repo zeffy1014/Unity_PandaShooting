@@ -8,9 +8,10 @@ public class TouchController : MonoBehaviour
 
     static List<Rect> operateAreaList = new List<Rect>();  // 操作用ボタン範囲リスト
 
-    int touchNum = 0; // 現在タッチされている数
-    int moveTouchIndex = -1; // 移動用タッチのIndex
-    int moveFingerID = -1;   // 移動用タッチのfingerId
+    Touch moveTouch; // 移動用タッチ情報
+//    int touchNum = 0; // 現在タッチされている数
+//    int moveTouchIndex = -1; // 移動用タッチのIndex
+//    int moveFingerID = -1;   // 移動用タッチのfingerId
 
     // 操作用ボタン範囲指定(移動用タッチ範囲外にするため)
     static public void SetOperateArea(Transform button)
@@ -48,11 +49,18 @@ public class TouchController : MonoBehaviour
         return ret;
     }
 
+    // 起動時の初期化
+    private void Start()
+    {
+        moveTouch.position = Vector2.zero;
+        moveTouch.phase = TouchPhase.Canceled;
+        moveTouch.fingerId = -1;
+        
+    }
+
     // 毎フレームタッチ情報を取得する
     private void Update()
     {
-        touchNum = Input.touchCount;
-
         // 操作用ボタン範囲内でPhase:Beganの指があったら移動用としてfingerIdとタッチ情報を保持
         // 同時にBeganとなる指があった場合はindex若い方を優先
         // 以降そのfingerIdのタッチを移動用タッチとする
@@ -61,47 +69,46 @@ public class TouchController : MonoBehaviour
         //   移動用タッチの指が離れていたら(Endもしくはタッチ無し)新たなBeganのタッチを移動用として保持
 
         // 移動用タッチがすでにある場合はそれを確認
-        if (-1 != moveTouchIndex && -1 != moveFingerID)
+        if (-1 != moveTouch.fingerId)
         {
-            Touch touch = Input.GetTouch(moveTouchIndex);
-            if (moveFingerID == touch.fingerId)
+            for (int i = 0; i < Input.touchCount; i++)
             {
-                switch (touch.phase)
+                Touch touch = Input.GetTouch(i);
+                if (moveTouch.fingerId == touch.fingerId)
                 {
-                    case TouchPhase.Moved:
-                    case TouchPhase.Stationary:
-                        // 移動用タッチを維持して終了
-                        return;
-                    case TouchPhase.Began:
-                    case TouchPhase.Ended:
-                    case TouchPhase.Canceled:
-                    default:
-                        // 移動用タッチ情報をクリアして先に進む
-                        Debug.Log("Finger for move has released.");
-                        moveTouchIndex = moveFingerID = -1;
-                        break;
+                    switch (touch.phase)
+                    {
+                        case TouchPhase.Moved:
+                        case TouchPhase.Stationary:
+                            // 移動用タッチを維持して終了
+                            moveTouch = touch;
+                            return;
+                        case TouchPhase.Began:
+                        case TouchPhase.Ended:
+                        case TouchPhase.Canceled:
+                        default:
+                            // 移動用タッチ情報をクリアして先に進む
+                            Debug.Log("Finger for move has released.");
+                            moveTouch.fingerId = -1;
+                            break;
+                    }
+                    break;
                 }
-            }
-            else
-            {
-                // 移動用タッチ情報をクリアして先に進む
-                moveTouchIndex = moveFingerID = -1;
             }
         }
 
         // ここからは移動用タッチ情報があるか取得する
-        for (int i=0; i<touchNum; i++)
+        for (int i=0; i<Input.touchCount; i++)
         {
             Touch touch = Input.GetTouch(i);
-            // タッチ範囲チェック
-            if (false == IsInOperateArea(touch.position))
+            // タッチ開始だったら範囲チェック
+            if (TouchPhase.Began == touch.phase)
             {
-                // タッチ開始だったらそれを移動用タッチとして保持して終了
-                if(TouchPhase.Began == touch.phase)
+                // 範囲内だったら保持
+                if (false == IsInOperateArea(touch.position))
                 {
                     Debug.Log("Here comes a new finger for move! Index:" + i + ", FingerID:" + touch.fingerId );
-                    moveTouchIndex = i;
-                    moveFingerID = touch.fingerId;
+                    moveTouch = touch;
                     return;
                 }
             }
@@ -122,10 +129,10 @@ public class TouchController : MonoBehaviour
     /* 戻り値: タッチ取得できたらtrue, できないならfalse */
     public bool GetMoveTouch(ref Touch retTouch)
     {
-        if (-1 != moveTouchIndex)
+        if (-1 != moveTouch.fingerId)
         {
             // 移動用タッチ情報が取得できる
-            retTouch = Input.GetTouch(moveTouchIndex);
+            retTouch = moveTouch;
             return true;
         }
         else
@@ -133,6 +140,8 @@ public class TouchController : MonoBehaviour
             // 移動用タッチ情報が無いので無効値などセット
             retTouch.position = Vector2.zero;
             retTouch.phase = TouchPhase.Canceled;
+            retTouch.fingerId = -1;
+
             return false;
         }
     }

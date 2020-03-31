@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdfa0f3aed17874458eb4844b92a588c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  distanceToCamera: 10
+  touchMoveSense: 2.5
   bullet: {fileID: 4061107315494808525, guid: bf27cb9569b096942aa522946fb35f9c, type: 3}
   damageEffect: {fileID: 8635869988181638110, guid: 69221c6f66a303347ae06602fdd57a34,
     type: 3}
@@ -160,6 +160,7 @@ MonoBehaviour:
   lifePanel: {fileID: 735294090}
   shotSE: {fileID: 8300000, guid: d3106f32b8913494d909dbfdba8cef05, type: 3}
   damageSE: {fileID: 8300000, guid: 85abe48da194cba4fb9327eb35ed66ca, type: 3}
+  touchContoller: {fileID: 1134366332}
 --- !u!212 &1582862
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -694,9 +695,9 @@ RectTransform:
   m_Father: {fileID: 1724391915}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -290, y: -630}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 110, y: 81}
   m_SizeDelta: {x: 160, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &190338333
