@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-    public float touchMoveSense = 5.0f; //タッチ操作による移動距離調整用感度
+    public float touchMoveSense = 2.5f; //タッチ操作による移動距離調整用感度
 
     public GameObject bullet;
     public GameObject damageEffect;
@@ -23,14 +23,25 @@ public class PlayerController : MonoBehaviour
 
     public TouchController touchContoller;
 
+    public Text posInfo;
+
     GameObject gameController;
 
-    // 移動範囲制限のための決め打ち画面範囲
-    float screenWidth = 5.0f;
-    float screenHeight = 10.0f;
+    // 移動範囲制限のための画面範囲
+    static float borderRatio = 0.95f;  //画面端に対する調整率
+    Rect borderRect = new Rect();  //画面範囲用の矩形
 
     private void Start()
     {
+        // 画面範囲設定(動的に)
+        borderRect.xMin = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0)).x * borderRatio;
+        borderRect.yMin = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0)).y * borderRatio;
+        borderRect.xMax = Camera.main.ViewportToWorldPoint(new Vector3(1, 1, 0)).x * borderRatio;
+        borderRect.yMax = Camera.main.ViewportToWorldPoint(new Vector3(1, 1, 0)).y * borderRatio;
+
+        Debug.Log("left-bottom:(" + borderRect.xMin.ToString("f1") + ", " + borderRect.yMax.ToString("f1") + "), " + 
+                  "right-top:("   + borderRect.xMax.ToString("f1") + ", " + borderRect.yMax.ToString("f1") + ")");
+
         Life = defaultLife;
         audioSource = GetComponent<AudioSource>();
 
@@ -59,13 +70,16 @@ public class PlayerController : MonoBehaviour
         Vector3 mousePosW = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, TouchController.distanceToCamera));
         //Debug.Log(Input.mousePosition + "->" + mousePosW);
 
-        // 画面からは出さない範囲で自機移動
-        if (screenWidth / 2 < mousePosW.x) mousePosW.x = screenWidth / 2;
-        if (-screenWidth / 2 > mousePosW.x) mousePosW.x = -screenWidth / 2;
-        if (screenHeight / 2 < mousePosW.y) mousePosW.y = screenHeight / 2;
-        if (-screenHeight / 2 > mousePosW.y) mousePosW.y = -screenHeight / 2;
+        // 画面からは出さない範囲(補正あり)で自機移動
+        if (borderRect.xMax < mousePosW.x) mousePosW.x = borderRect.xMax;
+        if (borderRect.xMin > mousePosW.x) mousePosW.x = borderRect.xMin;
+        if (borderRect.yMax < mousePosW.y) mousePosW.y = borderRect.yMax;
+        if (borderRect.yMin > mousePosW.y) mousePosW.y = borderRect.yMin;
 
         transform.position = mousePosW;
+
+        // Debug用位置情報表示
+        DispPosInfo(Input.mousePosition, mousePosW);
 
         // プレイ中のみの動作
         if (GameState.State.Play == State)
@@ -87,19 +101,29 @@ public class PlayerController : MonoBehaviour
             // 移動していたら移動量(感度用設定値を加味)を加算して移動先座標を得る
             if (TouchPhase.Moved == touchPos.phase)
             {
-                Vector2 newPos = new Vector2();
-                newPos.x = touchPos.deltaPosition.x / touchMoveSense * Time.deltaTime + transform.position.x;
-                newPos.y = touchPos.deltaPosition.y / touchMoveSense * Time.deltaTime + transform.position.y;
+                // タッチによる移動量スクリーン幅・高さで割って0～1の割合にする
+                Vector2 distRatio = new Vector2(touchPos.deltaPosition.x / Screen.width, touchPos.deltaPosition.y / Screen.height);
+                Debug.Log("distRatio:" + distRatio.x.ToString("f2") + "," + distRatio.y.ToString("f2"));
 
-                //Debug.Log(transform.position + "->" + newPos);
+                // 割合を移動範囲と感度設定とでかけ合わせて自機移動量を出す
+                // Touch.deltaTimeで割って移動速度にしてからTime.deltaTimeをかけることで正式な移動量とする
+                Vector2 distW = new Vector2();
+                distW.x = distRatio.x * borderRect.width * touchMoveSense * (Time.deltaTime / touchPos.deltaTime);
+                distW.y = distRatio.y * borderRect.height* touchMoveSense * (Time.deltaTime / touchPos.deltaTime);
+                //Debug.Log("width:" + borderRect.width + ", height:" + borderRect.height + ", Sense:" + touchMoveSense + ", distW:" + distW);
+
+                Vector2 newPos = (Vector2)transform.position + distW;
 
                 // 画面からは出さない範囲で自機移動
-                if (screenWidth / 2 < newPos.x) newPos.x = screenWidth / 2;
-                if (-screenWidth / 2 > newPos.x) newPos.x = -screenWidth / 2;
-                if (screenHeight / 2 < newPos.y) newPos.y = screenHeight / 2;
-                if (-screenHeight / 2 > newPos.y) newPos.y = -screenHeight / 2;
+                if (borderRect.xMax < newPos.x) newPos.x = borderRect.xMax;
+                if (borderRect.xMin > newPos.x) newPos.x = borderRect.xMin;
+                if (borderRect.yMax < newPos.y) newPos.y = borderRect.yMax;
+                if (borderRect.yMin > newPos.y) newPos.y = borderRect.yMin;
 
                 transform.position = newPos;
+
+                // Debug用位置情報表示
+                DispPosInfo(touchPos.position, newPos);
             }
         }
         else
@@ -107,6 +131,26 @@ public class PlayerController : MonoBehaviour
             // 何もしない
         }
 
+    }
+
+    // Debug用位置情報表示
+    void DispPosInfo(Vector2 input, Vector2 pos)
+    {
+        // 文字列生成
+        posInfo.text = "Input:" + input.x.ToString("f1") + ", " + input.y.ToString("f1") + "\nPos:" + pos.x.ToString("f1") + ", " + pos.y.ToString("f1");
+
+        // 文字列移動
+        float sideOffset = 0.0f;  // 横方向にずらす距離
+        float heightOffset = 150.0f;  // 縦方向にずらす距離
+        Vector2 dispPos = input + new Vector2(sideOffset, heightOffset);
+
+        // 画面からは出さない範囲で調整
+        if (Screen.width < dispPos.x + posInfo.GetComponent<RectTransform>().rect.width / 2) dispPos.x = Screen.width - posInfo.GetComponent<RectTransform>().rect.width / 2;
+        if (0.0f > dispPos.x - posInfo.GetComponent<RectTransform>().rect.width / 2) dispPos.x = posInfo.GetComponent<RectTransform>().rect.width / 2;
+        if (Screen.height < dispPos.y + posInfo.GetComponent<RectTransform>().rect.height / 2) dispPos.y = Screen.height - posInfo.GetComponent<RectTransform>().rect.height / 2;
+        if (0.0f > dispPos.y - posInfo.GetComponent<RectTransform>().rect.height / 2) dispPos.y = posInfo.GetComponent<RectTransform>().rect.height / 2;
+
+        posInfo.transform.position = dispPos;
     }
 
     public void ShotBullet()

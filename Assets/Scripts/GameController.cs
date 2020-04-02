@@ -22,6 +22,7 @@ public class GameController : MonoBehaviour
     public Button titleButton;
     public Button shotButton;
     public Toggle debugMode;
+    public Text posInfo;
 
     bool isMobile = false;
 
@@ -53,8 +54,13 @@ public class GameController : MonoBehaviour
         shotButton.gameObject.SetActive(isMobile);
 
         // Debug ModeのToggleはEditor使用時のみ表示する
-        debugMode.gameObject.SetActive(Application.isEditor);
-        debugMode.GetComponent<Toggle>().isOn = Application.isEditor;
+        //bool validDebug = Application.isEditor;
+        bool validDebug = true; // TODO:しばらくは常にON
+        debugMode.gameObject.SetActive(validDebug);
+        debugMode.GetComponent<Toggle>().isOn = validDebug;
+
+        // Debug用位置情報もDebug Modeの場合のみ表示
+        posInfo.gameObject.SetActive(validDebug);
     }
 
     private void Update()
