@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class ObjectDestryoer : MonoBehaviour
 {
-    public bool isDeadLine = false;
+    public bool isDeadLine = false;    // 触れたらゲームオーバー
+    public bool isDestroyLine = true;  // 触れたらオブジェクト削除
 
     GameObject gameController;
 
@@ -17,10 +18,14 @@ public class ObjectDestryoer : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Destroy(other.gameObject);
+        // オブジェクト削除
+        if (isDestroyLine)
+        {
+            Destroy(other.gameObject);
 
-        // コンボ切れる
-        gameController.SendMessage("BreakCombo", SendMessageOptions.DontRequireReceiver);
+            // コンボ切れる
+            gameController.SendMessage("BreakCombo", SendMessageOptions.DontRequireReceiver);
+        }
 
         // ゲームオーバーのトリガーとなるオブジェクトに触れた場合
         if (isDeadLine)

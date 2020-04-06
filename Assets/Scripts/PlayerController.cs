@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
 
     public GameObject bullet;
     public GameObject damageEffect;
-    public int defaultLife = 3;
+    public int defaultLife = 5;
 
     public int Life { get; set; }
     public bool Playing { get; set; } = false;
@@ -27,19 +27,23 @@ public class PlayerController : MonoBehaviour
 
     GameObject gameController;
 
-    // 移動範囲制限のための画面範囲
-    static float borderRatio = 0.95f;  //画面端に対する調整率
-    Rect borderRect = new Rect();  //画面範囲用の矩形
+    // 移動範囲制限のための範囲設定
+    Rect borderRect = new Rect();       //画面範囲用の矩形
+    static float borderRatioV = 0.95f; //画面端に対する調整率(水平)
+    static float borderRatioH = 0.95f; //画面端に対する調整率(垂直)
+    public GameObject leftWall;         //左側の壁
+    public GameObject rightWall;        //右側の壁
 
     private void Start()
     {
-        // 画面範囲設定(動的に)
-        borderRect.xMin = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0)).x * borderRatio;
-        borderRect.yMin = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0)).y * borderRatio;
-        borderRect.xMax = Camera.main.ViewportToWorldPoint(new Vector3(1, 1, 0)).x * borderRatio;
-        borderRect.yMax = Camera.main.ViewportToWorldPoint(new Vector3(1, 1, 0)).y * borderRatio;
+        // 画面範囲設定(動的に) 垂直方向はスクリーン上下、水平方向は左右の壁
+        borderRect.yMin = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0)).y * borderRatioH;
+        borderRect.yMax = Camera.main.ViewportToWorldPoint(new Vector3(1, 1, 0)).y * borderRatioH;
+        float borderShrinkV = (rightWall.transform.position.x - leftWall.transform.position.x) * (1.0f - borderRatioV);
+        borderRect.xMin = leftWall.transform.position.x + borderShrinkV;
+        borderRect.xMax = rightWall.transform.position.x - borderShrinkV;
 
-        Debug.Log("left-bottom:(" + borderRect.xMin.ToString("f1") + ", " + borderRect.yMax.ToString("f1") + "), " + 
+        Debug.Log("left-bottom:(" + borderRect.xMin.ToString("f1") + ", " + borderRect.yMin.ToString("f1") + "), " + 
                   "right-top:("   + borderRect.xMax.ToString("f1") + ", " + borderRect.yMax.ToString("f1") + ")");
 
         Life = defaultLife;
