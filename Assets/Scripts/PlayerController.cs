@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-    public float touchMoveSense = 2.5f; //タッチ操作による移動距離調整用感度
+    public float touchMoveSense = 25f; //タッチ操作による移動距離調整用感度
 
     public GameObject bullet;
     public GameObject damageEffect;
@@ -105,15 +105,16 @@ public class PlayerController : MonoBehaviour
             // 移動していたら移動量(感度用設定値を加味)を加算して移動先座標を得る
             if (TouchPhase.Moved == touchPos.phase)
             {
-                // タッチによる移動量スクリーン幅・高さで割って0～1の割合にする
-                Vector2 distRatio = new Vector2(touchPos.deltaPosition.x / Screen.width, touchPos.deltaPosition.y / Screen.height);
+                // タッチによる移動量の変換(画面の縦のサイズを基準に割合をとる)
+                Vector2 distRatio = new Vector2(touchPos.deltaPosition.x / Screen.height, touchPos.deltaPosition.y / Screen.height);
                 Debug.Log("distRatio:" + distRatio.x.ToString("f2") + "," + distRatio.y.ToString("f2"));
 
-                // 割合を移動範囲と感度設定とでかけ合わせて自機移動量を出す
+                // 割合に感度設定をかけ合わせて自機移動量を出す
                 // Touch.deltaTimeで割って移動速度にしてからTime.deltaTimeをかけることで正式な移動量とする
-                Vector2 distW = new Vector2();
-                distW.x = distRatio.x * borderRect.width * touchMoveSense * (Time.deltaTime / touchPos.deltaTime);
-                distW.y = distRatio.y * borderRect.height* touchMoveSense * (Time.deltaTime / touchPos.deltaTime);
+                //Vector2 distW = new Vector2();
+                //distW.x = distRatio.x * touchMoveSense * (Time.deltaTime / touchPos.deltaTime);
+                //distW.y = distRatio.y * touchMoveSense * (Time.deltaTime / touchPos.deltaTime);
+                Vector2 distW = distRatio * touchMoveSense * (Time.deltaTime / touchPos.deltaTime);
                 //Debug.Log("width:" + borderRect.width + ", height:" + borderRect.height + ", Sense:" + touchMoveSense + ", distW:" + distW);
 
                 Vector2 newPos = (Vector2)transform.position + distW;
