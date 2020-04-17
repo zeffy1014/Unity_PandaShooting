@@ -7,10 +7,9 @@ public class PlayerController : MonoBehaviour
 {
     public float touchMoveSense = 25f; //タッチ操作による移動距離調整用感度
 
-    public GameObject bullet;
     public GameObject damageEffect;
-    public int defaultLife = 5;
 
+    public int defaultLife = 5;
     public int Life { get; set; }
     public bool Playing { get; set; } = false;
     public GameState.State State { get; set; } = GameState.State.None;
@@ -89,7 +88,7 @@ public class PlayerController : MonoBehaviour
         if (GameState.State.Play == State)
         {
             // マウス左クリックで弾を出す
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButton(0))
             {
                 ShotBullet();
             }
@@ -107,7 +106,7 @@ public class PlayerController : MonoBehaviour
             {
                 // タッチによる移動量の変換(画面の縦のサイズを基準に割合をとる)
                 Vector2 distRatio = new Vector2(touchPos.deltaPosition.x / Screen.height, touchPos.deltaPosition.y / Screen.height);
-                Debug.Log("distRatio:" + distRatio.x.ToString("f2") + "," + distRatio.y.ToString("f2"));
+                //Debug.Log("distRatio:" + distRatio.x.ToString("f2") + "," + distRatio.y.ToString("f2"));
 
                 // 割合に感度設定をかけ合わせて自機移動量を出す
                 // Touch.deltaTimeで割って移動速度にしてからTime.deltaTimeをかけることで正式な移動量とする
@@ -163,12 +162,9 @@ public class PlayerController : MonoBehaviour
         Vector3 genPos = transform.position;
         genPos.y += 1.0f;
         Vector3 genRot = transform.rotation.eulerAngles;
-        genRot.z += 360.0f * Random.value;
+        //genRot.z += 360.0f * Random.value;
 
-        // 弾生成
-        Instantiate<GameObject>(bullet, genPos, Quaternion.Euler(genRot));
-        // 音も出す
-        audioSource.PlayOneShot(shotSE);
+        BulletController.ShotBullet(genPos, genRot);
 
     }
 

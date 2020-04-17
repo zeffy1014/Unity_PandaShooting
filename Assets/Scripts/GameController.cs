@@ -113,7 +113,7 @@ public class GameController : MonoBehaviour
             if (PlayerPrefs.GetInt("HighScore") < score) PlayerPrefs.SetInt("HighScore", score);
 
             // 音も鳴らす
-            audioSource.PlayOneShot(defeatSE);
+            //audioSource.PlayOneShot(defeatSE);
         }
     }
 

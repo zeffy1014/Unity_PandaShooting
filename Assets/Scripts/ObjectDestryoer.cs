@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class ObjectDestryoer : MonoBehaviour
 {
-    public bool isDeadLine = false;    // 触れたらゲームオーバー
-    public bool isDestroyLine = true;  // 触れたらオブジェクト削除
+    public bool isDeadLine = false;          // 触れたらゲームオーバー
+    public bool isDestroyBulletLine = true;  // 触れたら弾だけ削除
+    public bool isDestroyLine = true;        // 触れたらなんでも削除
 
     GameObject gameController;
+    GameObject bulletController;
 
     void Start()
     {
@@ -18,13 +20,22 @@ public class ObjectDestryoer : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // オブジェクト削除
-        if (isDestroyLine)
-        {
-            Destroy(other.gameObject);
+        // 弾だったら破棄のお知らせ
+        if ("Bullet" == other.tag) {
+            if (isDestroyBulletLine || isDestroyLine)
+            {
+                BulletController.DestroyBullet();
+                Destroy(other.gameObject);
+            }
+        }
+        else {
+            if (isDestroyLine)
+            {
+                Destroy(other.gameObject);
 
-            // コンボ切れる
-            gameController.SendMessage("BreakCombo", SendMessageOptions.DontRequireReceiver);
+                // コンボ切れる
+                gameController.SendMessage("BreakCombo", SendMessageOptions.DontRequireReceiver);
+            }
         }
 
         // ゲームオーバーのトリガーとなるオブジェクトに触れた場合
