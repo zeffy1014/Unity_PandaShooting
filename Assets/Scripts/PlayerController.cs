@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour
     // 移動範囲制限のための範囲設定
     Rect borderRect = new Rect();       //画面範囲用の矩形
     static float borderRatioV = 0.95f; //画面端に対する調整率(水平)
-    static float borderRatioH = 0.95f; //画面端に対する調整率(垂直)
+    static float borderRatioH = 0.85f; //画面端に対する調整率(垂直)
     public GameObject leftWall;         //左側の壁
     public GameObject rightWall;        //右側の壁
 
