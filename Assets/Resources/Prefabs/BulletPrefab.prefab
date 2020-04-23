@@ -97,12 +97,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8d01dcdd833e20468eb4620df6a904c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movSpeed: 7
+  movSpeed: 20
   rotateSpeed: 400
   defeatEffect: {fileID: 7939302427467974438, guid: 09ea7ec0501cb8b4aa1b040e6d791668,
     type: 3}
-  shotSE: {fileID: 8300000, guid: d3106f32b8913494d909dbfdba8cef05, type: 3}
-  defeatSE: {fileID: 8300000, guid: a610a41196f17484abdc7e520d21a868, type: 3}
 --- !u!70 &2822641171802819471
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

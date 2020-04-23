@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameController : MonoBehaviour
+public class GameController : MonoBehaviour, IGameEventReceiver
 {
     const float DisplayGoSec = 1.5f;
     const float CountDownSpan = 0.1f;
 
-    GameState.State state = GameState.State.None;
+    GameState state = GameState.None;
 
     public int baseScore;
     public int bonusScore;
@@ -78,7 +78,7 @@ public class GameController : MonoBehaviour
         // 状態ごとにイベント監視
         switch (state)
         {
-            case GameState.State.Ready:
+            case GameState.Ready:
                 // ラベルを点滅
                 Color color = stateLabel.color;
                 color.a = Mathf.Sin(Time.time * 5.0f);
@@ -87,11 +87,11 @@ public class GameController : MonoBehaviour
                 // 何か押したらスタート
                 if (Input.anyKey) EntryPlay();
                 break;
-            case GameState.State.Play:
+            case GameState.Play:
                 // 死亡したらゲームオーバー(Debug Modeでなければ)
                 if (0 >= player.Life && !debugMode.isOn) EntryGameOver();
                 break;
-            case GameState.State.GameOver:
+            case GameState.GameOver:
                  break;
         }
     }
@@ -100,7 +100,7 @@ public class GameController : MonoBehaviour
     public void IncreaseScore()
     {
         // ゲームオーバーでなければ加算
-        if (GameState.State.GameOver != state)
+        if (GameState.GameOver != state)
         {
             // スコアとコンボ追加
             // スコア計算式: 基礎点 + コンボ数*ボーナス点
@@ -115,20 +115,6 @@ public class GameController : MonoBehaviour
             // 音も鳴らす
             //audioSource.PlayOneShot(defeatSE);
         }
-    }
-
-    // コンボ切れ
-    public void BreakCombo()
-    {
-        combo = 0;
-        comboLabel.text = "Combo : " + combo;
-    }
-
-    // ゲームオーバー…
-    void GameIsOver()
-    {
-        // Debug Mode中でなければゲームオーバー
-        if (!debugMode.isOn) if (GameState.State.Play == state) player.ForceGameOver();
     }
 
     // 一定時間GO表示する
@@ -154,11 +140,30 @@ public class GameController : MonoBehaviour
         stateLabel.text = "";
     }
 
+    /* 各種Event受信処理 */
+    // コンボ切れ
+    public void OnBreakCombo()
+    {
+        combo = 0;
+        comboLabel.text = "Combo : " + combo;
+    }
+
+    // ゲームオーバー…
+    public void OnGameOver()
+    {
+        // Debug Mode中でなければゲームオーバー
+        if (!debugMode.isOn) if (GameState.Play == state) player.ForceGameOver();
+    }
+
+    // 何もしない
+    public void OnDamage(OperationTarget target, int damage) { }
+
+
     /* 各種状態入場処理 */
     void EntryReady()
     {
-        state = GameState.State.Ready;
-        player.State = GameState.State.Ready;
+        state = GameState.Ready;
+        player.State = GameState.Ready;
 
         // ラベルを更新
         scoreLabel.text = "Score : " + 0;
@@ -178,8 +183,8 @@ public class GameController : MonoBehaviour
 
     void EntryPlay()
     {
-        state = GameState.State.Play;
-        player.State = GameState.State.Play;
+        state = GameState.Play;
+        player.State = GameState.Play;
         generator.GameStart();
 
         // 音をならす
@@ -195,8 +200,8 @@ public class GameController : MonoBehaviour
 
     void EntryGameOver()
     {
-        state = GameState.State.GameOver;
-        player.State = GameState.State.GameOver;
+        state = GameState.GameOver;
+        player.State = GameState.GameOver;
 
         // ラベルを更新
         stateLabel.gameObject.SetActive(true);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour
 {
@@ -12,7 +13,7 @@ public class PlayerController : MonoBehaviour
     public int defaultLife = 5;
     public int Life { get; set; }
     public bool Playing { get; set; } = false;
-    public GameState.State State { get; set; } = GameState.State.None;
+    public GameState State { get; set; } = GameState.None;
 
     public LifePanel lifePanel;
 
@@ -85,7 +86,7 @@ public class PlayerController : MonoBehaviour
         DispPosInfo(Input.mousePosition, mousePosW);
 
         // プレイ中のみの動作
-        if (GameState.State.Play == State)
+        if (GameState.Play == State)
         {
             // マウス左クリックで弾を出す
             if (Input.GetMouseButton(0))
@@ -183,10 +184,21 @@ public class PlayerController : MonoBehaviour
             lifePanel.UpdateLife(Life);
 
             // コンボ切れる
-            gameController.SendMessage("BreakCombo", SendMessageOptions.DontRequireReceiver);
+            ExecuteEvents.Execute<IGameEventReceiver>(
+                target: gameController,
+                eventData: null,
+                functor: (receiver, eventData) => receiver.OnBreakCombo()
+            );
 
             // ライフ無くなったらGameOver処理してもらう
-            if (0 >= Life) gameController.SendMessage("GameIsOver", SendMessageOptions.DontRequireReceiver);
+            if (0 >= Life)
+            {
+                ExecuteEvents.Execute<IGameEventReceiver>(
+                    target: gameController,
+                    eventData: null,
+                    functor: (receiver, eventData) => receiver.OnGameOver()
+                );
+            }
         }
     }
 

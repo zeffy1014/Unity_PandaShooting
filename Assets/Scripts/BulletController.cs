@@ -5,7 +5,7 @@ using UnityEngine;
 public class BulletController : MonoBehaviour
 {
     static GameObject bulletPrefab = null;  // 弾のPrefab
-    static float shotCycle = 0.1f; // 弾の連射間隔
+    static float shotCycle = 0.2f; // 弾の連射間隔
     static float waitShotTime = 0.0f; // 現在の連射待ち時間
     static bool bulletGo = false; // 待たずに発射してよいかどうか
 

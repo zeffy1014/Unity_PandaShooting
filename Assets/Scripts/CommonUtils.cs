@@ -2,30 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// Windowsでマウスカーソルを動かしたい
-/* とりあえず使わない
-using System.Runtime.InteropServices;
-#if UNITY_STANDALONE_WIN
-public class Win32API
-{
-    [DllImport("User32.Dll")]
-    public static extern long SetCursorPos(int x, int y);
-}
-#endif
-*/
+using UnityEngine.EventSystems;
 
-public class GameState : MonoBehaviour
+/*** メッセージシステム受信用のInterface ***/
+// ゲーム制御
+public interface IGameEventReceiver : IEventSystemHandler
 {
-    // ゲームステート
-    public enum State
-    {
-        None,
-        Ready,
-        Play,
-        GameOver
-    };
-
+    void OnGameOver();
+    void OnBreakCombo();
+    void OnDamage(OperationTarget target, int damage);
 }
+
+
+/*** 共通enum定義 ***/
+// ゲームステート
+public enum GameState
+{
+    None,
+    Ready,
+    Play,
+    GameOver
+};
+
+// 処理ターゲット
+public enum OperationTarget
+{
+    None,
+    Player,
+    House
+};
+
 
 // 動作プラットフォーム判断
 public class PlatformInfo
@@ -44,3 +50,4 @@ public class PlatformInfo
     }
 
 }
+
