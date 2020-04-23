@@ -65,13 +65,6 @@ public class HouseGauge : MonoBehaviour
         if (trueHp > maxHp) trueHp = maxHp;
     }
 
-    public void GetHp(ref int nowHp, ref int maxHp)
-    {
-        nowHp = this.trueHp;
-        maxHp = this.maxHp;
-        return;
-    }
-
     void Update()
     {
         // 死んでなければ自然回復

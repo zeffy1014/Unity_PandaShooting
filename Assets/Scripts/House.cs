@@ -17,13 +17,6 @@ public class House : MonoBehaviour, IGameEventReceiver
     public void OnGameOver() { }
     public void OnBreakCombo() { }
 
-
-    public void GetHp(ref int nowHp, ref int maxHp)
-    {
-        hpGauge.GetHp(ref nowHp, ref maxHp);
-        return;
-    }
-
     void Start()
     {
     }
