@@ -97,10 +97,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fallSpeedBase: 3
+  hpBase: 1
   enemySprites:
   - {fileID: 6411998509940877570, guid: cc8ecf146826a7d49a42dc94c8344c94, type: 3}
   - {fileID: 5091634072379964241, guid: cc8ecf146826a7d49a42dc94c8344c94, type: 3}
   - {fileID: -8480004912693699175, guid: cc8ecf146826a7d49a42dc94c8344c94, type: 3}
+  defeatEffect: {fileID: 7939302427467974438, guid: 09ea7ec0501cb8b4aa1b040e6d791668,
+    type: 3}
+  defeatSE: {fileID: 8300000, guid: 85abe48da194cba4fb9327eb35ed66ca, type: 3}
 --- !u!50 &5920191006166416127
 Rigidbody2D:
   serializedVersion: 4

@@ -10,11 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 4061107315494808526}
   - component: {fileID: 4061107315494808527}
-  - component: {fileID: 4061107315494808524}
   - component: {fileID: 2822641171802819471}
   - component: {fileID: -5020966952757782419}
   - component: {fileID: -7965971047096962514}
   - component: {fileID: 6174253928329484082}
+  - component: {fileID: 3258776464465187045}
   m_Layer: 0
   m_Name: BulletPrefab
   m_TagString: Bullet
@@ -85,22 +85,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &4061107315494808524
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4061107315494808525}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8d01dcdd833e20468eb4620df6a904c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  movSpeed: 20
-  rotateSpeed: 400
-  defeatEffect: {fileID: 7939302427467974438, guid: 09ea7ec0501cb8b4aa1b040e6d791668,
-    type: 3}
 --- !u!70 &2822641171802819471
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -339,3 +323,20 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &3258776464465187045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4061107315494808525}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e63af126e8d204c40986b4ae459dfd9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  movSpeed: 20
+  rotateSpeed: 400
+  attack: 1
+  defeatEffect: {fileID: 7939302427467974438, guid: 09ea7ec0501cb8b4aa1b040e6d791668,
+    type: 3}

@@ -4,8 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
+// TODO:PlayerとEnemyをFlyerみたいなものにまとめてPlayerの移動などは継承して書きたい
+
 public class PlayerController : MonoBehaviour
 {
+    // 弾を撃つ際の設定
+    static float shotCycle = 0.2f; // 弾の連射間隔
+    static float waitShotTime = 0.0f; // 現在の連射待ち時間
+
     public float touchMoveSense = 25f; //タッチ操作による移動距離調整用感度
 
     public GameObject damageEffect;
@@ -43,8 +49,10 @@ public class PlayerController : MonoBehaviour
         borderRect.xMin = leftWall.transform.position.x + borderShrinkV;
         borderRect.xMax = rightWall.transform.position.x - borderShrinkV;
 
+        /*
         Debug.Log("left-bottom:(" + borderRect.xMin.ToString("f1") + ", " + borderRect.yMin.ToString("f1") + "), " + 
                   "right-top:("   + borderRect.xMax.ToString("f1") + ", " + borderRect.yMax.ToString("f1") + ")");
+         */
 
         Life = defaultLife;
         audioSource = GetComponent<AudioSource>();
@@ -160,12 +168,24 @@ public class PlayerController : MonoBehaviour
 
     public void ShotBullet()
     {
-        Vector3 genPos = transform.position;
-        genPos.y += 1.0f;
-        Vector3 genRot = transform.rotation.eulerAngles;
-        //genRot.z += 360.0f * Random.value;
+        // 連射待ち時間経過しているか、発射OKだったら放つ
+        if (waitShotTime >= shotCycle || true == BulletController.BulletGo)
+        {
+            Vector3 genPos = transform.position;
+            genPos.y += 1.0f;
+            Vector3 genRot = transform.rotation.eulerAngles;
+            //genRot.z += 360.0f * Random.value;
 
-        BulletController.ShotBullet(genPos, genRot);
+            BulletController.ShotBullet(genPos, genRot, BulletKind.Player_Mikan);
+
+            // 待ち時間クリア
+            waitShotTime = 0.0f;
+        }
+        else
+        {
+            // 今回は発射せず待ち時間を増加
+            waitShotTime += Time.deltaTime;
+        }
 
     }
 

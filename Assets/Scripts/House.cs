@@ -16,6 +16,7 @@ public class House : MonoBehaviour, IGameEventReceiver
     // 何もしないものたち
     public void OnGameOver() { }
     public void OnBreakCombo() { }
+    public void OnIncreaseScore() { }
 
     void Start()
     {

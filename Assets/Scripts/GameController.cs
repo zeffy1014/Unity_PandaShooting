@@ -155,6 +155,12 @@ public class GameController : MonoBehaviour, IGameEventReceiver
         if (!debugMode.isOn) if (GameState.Play == state) player.ForceGameOver();
     }
 
+    // スコア加算
+    public void OnIncreaseScore()
+    {
+        IncreaseScore();
+    }
+    
     // 何もしない
     public void OnDamage(OperationTarget target, int damage) { }
 

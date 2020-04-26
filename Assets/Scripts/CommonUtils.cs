@@ -10,6 +10,7 @@ public interface IGameEventReceiver : IEventSystemHandler
 {
     void OnGameOver();
     void OnBreakCombo();
+    void OnIncreaseScore();
     void OnDamage(OperationTarget target, int damage);
 }
 
