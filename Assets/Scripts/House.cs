@@ -1,10 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class House : MonoBehaviour, IGameEventReceiver
 {
     public HouseGauge hpGauge;
+    public Text dateTime;
 
     /* Event受信処理 */
     // ダメージ発生
@@ -20,9 +23,14 @@ public class House : MonoBehaviour, IGameEventReceiver
 
     void Start()
     {
+        // 日時Text取得・更新
+        // dateTime = this.GetComponentInChildren<Text>();
+        // dateTime.text = DateTime.Now.ToString("yyyy-MM-dd ddd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
     }
 
     void Update()
     {
+        // 日時Text更新
+        dateTime.text = DateTime.Now.ToString("yyyy-MM-dd ddd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
     }
 }
