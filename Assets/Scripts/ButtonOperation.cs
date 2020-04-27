@@ -8,7 +8,7 @@ public enum ButtonKind
 {
     None,
     Action_Shot,  // 弾を発射
-    Action_Throw, // 武器を投げる
+    Action_Slide, // スライドして物を投げる
 
     System_Retry, // リトライする
     System_Title, // タイトルへ戻る
@@ -27,15 +27,30 @@ public class ButtonOperation : MonoBehaviour
     public bool isOperatePanel = false; // プレイ中の操作ボタンかどうか
 
     private bool isDown = false; // 押された状態かどうか
+    private bool isMobile = false;  // モバイル環境かどうか
 
     private void Start()
     {
-        // プレイ中の操作ボタンだったら移動用タッチ範囲から外す
-        if (isOperatePanel) TouchController.SetOperateArea(transform);
+        // プレイ中の操作ボタンだったら
+        if (isOperatePanel)
+        {
+            // 移動用タッチ範囲から外す
+            TouchController.SetOperateArea(transform);
+            // モバイル環境だけ有効にする
+            isMobile = PlatformInfo.IsMobile();
+            this.gameObject.SetActive(isMobile);
+        }
     }
 
     private void Update()
     {
+        // Unity Remoteは起動直後に接続確認できないので再確認
+        if (Application.isEditor && !isMobile && isOperatePanel)
+        {
+            isMobile = PlatformInfo.IsMobile();
+            this.gameObject.SetActive(isMobile);
+        }
+
         // 押されているかどうか
         if (isDown)
         {
