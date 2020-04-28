@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+using UnityEngine.EventSystems;
+
 // ボタンの種類
 public enum ButtonKind
 {
@@ -13,7 +15,6 @@ public enum ButtonKind
     System_Retry, // リトライする
     System_Title, // タイトルへ戻る
 };
-
 
 public class ButtonOperation : MonoBehaviour
 {
@@ -27,7 +28,9 @@ public class ButtonOperation : MonoBehaviour
     public bool isOperatePanel = false; // プレイ中の操作ボタンかどうか
 
     private bool isDown = false; // 押された状態かどうか
-    private bool isMobile = false;  // モバイル環境かどうか
+
+    // ドラッグ操作検出用
+    private Vector2 startDragPoint = Vector2.zero;  // ドラッグ開始地点
 
     private void Start()
     {
@@ -36,21 +39,11 @@ public class ButtonOperation : MonoBehaviour
         {
             // 移動用タッチ範囲から外す
             TouchController.SetOperateArea(transform);
-            // モバイル環境だけ有効にする
-            isMobile = PlatformInfo.IsMobile();
-            this.gameObject.SetActive(isMobile);
         }
     }
 
-    private void Update()
+    void Update()
     {
-        // Unity Remoteは起動直後に接続確認できないので再確認
-        if (Application.isEditor && !isMobile && isOperatePanel)
-        {
-            isMobile = PlatformInfo.IsMobile();
-            this.gameObject.SetActive(isMobile);
-        }
-
         // 押されているかどうか
         if (isDown)
         {
@@ -59,7 +52,7 @@ public class ButtonOperation : MonoBehaviour
             if (ButtonKind.Action_Shot == buttonKind)
             {
                 // 弾を撃つ
-                if (player) player.ShotBullet();
+                if (player) player.ShotBullet(BulletKind.Player_Mikan, player.transform.eulerAngles.z);
             }
         }
         else
@@ -85,28 +78,67 @@ public class ButtonOperation : MonoBehaviour
 
     /* 各種ボタン操作に対し処理を行いたい場合 */
     // ボタン押し
-    public void OnButtonDown()
+    public void OnButtonDown(PointerEventData data)
     {
         isDown = true;
+        Debug.Log("OnButtonDown, pointerId:" + data.pointerId + ", button:" + this.buttonKind);
 
-        if (ButtonKind.Action_Shot == buttonKind)
+        switch (buttonKind)
         {
-            // 弾を撃つ
-            if (player) player.ShotBullet();
+            case ButtonKind.Action_Shot:
+                // 弾を撃つ
+                if (player) player.ShotBullet(BulletKind.Player_Mikan, player.transform.eulerAngles.z);
+                break;
+            default:
+                break;
         }
     }
 
     // ボタン離し
-    public void OnButtonUp()
+    public void OnButtonUp(PointerEventData data)
     {
         isDown = false;
+        Debug.Log("OnButtonUp, pointerId:" + data.pointerId + ", button:" + this.buttonKind);
 
-        if (ButtonKind.Action_Shot == buttonKind)
+        switch (buttonKind)
         {
-            // ボタンを離され表示にする
-            if (popImage) this.GetComponent<Image>().sprite = popImage;
+            case ButtonKind.Action_Shot:
+                // ボタンを離され表示にする -> Updateで対応
+                // if (popImage) this.GetComponent<Image>().sprite = popImage;
+                break;
+            case ButtonKind.Action_Slide:
+                if (Vector2.zero != startDragPoint)
+                {
+                    float diffX = data.position.x - startDragPoint.x;
+                    float diffY = data.position.y - startDragPoint.y;
+                    float shotAngle = Mathf.Atan2(diffX, diffY) * Mathf.Rad2Deg;
+                    Debug.Log("shotAngle:" + shotAngle);
+
+                    if (player) player.ShotBullet(BulletKind.Player_Sakana, shotAngle);
+                }
+                // 初期化
+                startDragPoint = Vector2.zero;
+                break;
+            default:
+                break;
         }
 
+    }
+
+    // ドラッグ開始
+    public void OnStartDrag(PointerEventData data)
+    {
+        Debug.Log("OnStartDrag, pointerId:" + data.pointerId + ", button:" + this.buttonKind);
+        if (ButtonKind.Action_Slide == buttonKind)
+        {
+            startDragPoint = data.position;
+        }
+    }
+
+    // ドラッグ終了
+    public void OnEndDrag(PointerEventData data)
+    {
+        Debug.Log("OnEndDrag, pointerId:" + data.pointerId + ", button:" + this.buttonKind);
     }
 
 }

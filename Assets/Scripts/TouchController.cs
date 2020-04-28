@@ -16,7 +16,7 @@ public class TouchController : MonoBehaviour
     // 操作用ボタン範囲指定(移動用タッチ範囲外にするため)
     static public void SetOperateArea(Transform button)
     {
-        Debug.Log("SetOperateArea input button pos: " + button.position);
+        //Debug.Log("SetOperateArea input button pos: " + button.position);
         // 左下
         Vector3 lb = new Vector3(button.position.x + button.GetComponent<RectTransform>().rect.xMin, button.position.y + button.GetComponent<RectTransform>().rect.yMin);
         //Debug.Log("SetOperateArea input button left-bottom: " + lb);
@@ -28,7 +28,7 @@ public class TouchController : MonoBehaviour
         Rect rect = new Rect(lb.x, lb.y, rt.x - lb.x, rt.y - lb.y);
         operateAreaList.Add(rect);
 
-        Debug.Log("SetOperateArea area: " + rect.position);
+        //Debug.Log("SetOperateArea area: " + rect.position);
     }
 
     // 操作用ボタン範囲かどうか判定

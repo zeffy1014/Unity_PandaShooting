@@ -40,6 +40,9 @@ public class PlayerController : MonoBehaviour
     public GameObject leftWall;         //左側の壁
     public GameObject rightWall;        //右側の壁
 
+    // 右クリック操作用
+    Vector2 startRightClickPos = Vector2.zero;
+
     private void Start()
     {
         // 画面範囲設定(動的に) 垂直方向はスクリーン上下、水平方向は左右の壁
@@ -99,7 +102,40 @@ public class PlayerController : MonoBehaviour
             // マウス左クリックで弾を出す
             if (Input.GetMouseButton(0))
             {
-                ShotBullet();
+                ShotBullet(BulletKind.Player_Mikan, transform.eulerAngles.z);
+            }
+            // マウス右クリック押し→離しで弾を出す
+            if (Input.GetMouseButtonDown(1))
+            {
+                startRightClickPos = Input.mousePosition;
+                Debug.Log("Right Click Start: " + startRightClickPos);
+            }
+            if (Input.GetMouseButtonUp(1))
+            {
+                if (Vector2.zero != startRightClickPos)
+                {
+                    Vector2 endRightClickPos = Input.mousePosition;
+                    float diffX = endRightClickPos.x - startRightClickPos.x;
+                    float diffY = endRightClickPos.y - startRightClickPos.y;
+                    float angle;
+                    if (diffX == 0.0f && diffY == 0.0f)
+                    {
+                        // 自機の向きに発射
+                        angle = transform.eulerAngles.z;
+                    }
+                    else
+                    {
+                        angle = Mathf.Atan2(diffX, diffY) * Mathf.Rad2Deg;
+                    }
+
+                    Debug.Log("Right Click End: " + endRightClickPos);
+                    Debug.Log("  diff:(" + diffX + "," + diffY + "), angle:" + angle);
+                    // 発射
+                    ShotBullet(BulletKind.Player_Sakana, angle);
+
+                    // 初期化
+                    startRightClickPos = Vector2.zero;
+                }
             }
         }
     }
@@ -166,27 +202,40 @@ public class PlayerController : MonoBehaviour
         posInfo.transform.position = dispPos;
     }
 
-    public void ShotBullet()
+    public void ShotBullet(BulletKind kind, float angle)
     {
-        // 連射待ち時間経過しているか、発射OKだったら放つ
-        if (waitShotTime >= shotCycle || true == BulletController.BulletGo)
+        // 発射位置と向き
+        Vector3 genPos = transform.position;
+        genPos.y += 1.0f;
+        Vector3 genRot = transform.rotation.eulerAngles;
+
+        switch (kind)
         {
-            Vector3 genPos = transform.position;
-            genPos.y += 1.0f;
-            Vector3 genRot = transform.rotation.eulerAngles;
-            //genRot.z += 360.0f * Random.value;
+            case BulletKind.Player_Mikan:
+                // 連射待ち時間経過しているか、発射OKだったら放つ
+                if (waitShotTime >= shotCycle || true == BulletController.BulletGo)
+                {
+                    BulletController.ShotBullet(genPos, genRot, BulletKind.Player_Mikan, angle);
 
-            BulletController.ShotBullet(genPos, genRot, BulletKind.Player_Mikan);
+                    // 待ち時間クリア
+                    waitShotTime = 0.0f;
+                }
+                else
+                {
+                    // 今回は発射せず待ち時間を増加
+                    waitShotTime += Time.deltaTime;
+                }
+                break;
+            case BulletKind.Player_Sakana:
+                // TODO:弾が回復していたら放てるようにするがとりあえず今は無条件
+                genRot.z += 360.0f * Random.value; // 向きを少しランダムにいじる
 
-            // 待ち時間クリア
-            waitShotTime = 0.0f;
+                BulletController.ShotBullet(genPos, genRot, BulletKind.Player_Sakana, angle);
+
+                break;
+            default:
+                break;
         }
-        else
-        {
-            // 今回は発射せず待ち時間を増加
-            waitShotTime += Time.deltaTime;
-        }
-
     }
 
     private void OnTriggerEnter2D(Collider2D other)

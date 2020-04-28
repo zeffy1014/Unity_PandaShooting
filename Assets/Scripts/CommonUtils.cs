@@ -44,6 +44,7 @@ public class PlatformInfo
         // AndroidかiOSか、あるいはUnity RemoteだったらMobile扱いとする
     #if UNITY_EDITOR
         bool ret = UnityEditor.EditorApplication.isRemoteConnected;
+        // Debug.Log("isRemoteConnected:" + ret);
     #else
         bool ret = isAndroid || isIOS;
     #endif

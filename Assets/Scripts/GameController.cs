@@ -18,6 +18,8 @@ public class GameController : MonoBehaviour, IGameEventReceiver
     public Text scoreLabel;
     public Text comboLabel;
     public Text stateLabel;
+    public Button shotButton;
+    public Button slideButton;
     public Button retryButton;
     public Button titleButton;
     public Toggle debugMode;
@@ -31,6 +33,8 @@ public class GameController : MonoBehaviour, IGameEventReceiver
     public AudioClip gameoverSE;
     public AudioClip defeatSE;
     AudioSource audioSource;
+
+    private bool isMobile = false;  // モバイル環境かどうか
 
     // Start is called before the first frame update
     void Start()
@@ -54,10 +58,22 @@ public class GameController : MonoBehaviour, IGameEventReceiver
 
         // Debug用位置情報もDebug Modeの場合のみ表示
         posInfo.gameObject.SetActive(validDebug);
+
+        // 操作ボタンはモバイル環境だけ有効にする
+        isMobile = PlatformInfo.IsMobile();
+        shotButton.gameObject.SetActive(isMobile);
+        slideButton.gameObject.SetActive(isMobile);
     }
 
     private void Update()
     {
+        // Unity Remoteは起動直後に接続確認できないので再確認
+        if (Application.isEditor && !isMobile)
+        {
+            isMobile = PlatformInfo.IsMobile();
+            shotButton.gameObject.SetActive(isMobile);
+            slideButton.gameObject.SetActive(isMobile);
+        }
     }
 
     void LateUpdate()

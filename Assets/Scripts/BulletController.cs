@@ -38,24 +38,26 @@ public class BulletController : MonoBehaviour
 
     static void LoadResource()
     {
-        bulletPrefab = (GameObject)Resources.Load("Prefabs/BulletPrefab");
+        bulletPrefab = (GameObject)Resources.Load("Prefabs/BulletPrefab_shot01");
         shotSE = (AudioClip)Resources.Load("Audio/swish1_1");
         return;
     }
 
-    static public void ShotBullet(Vector3 pos, Vector3 rot, BulletKind kind)
+    // 弾を発射
+    static public void ShotBullet(Vector3 pos, Vector3 rot, BulletKind kind, float angle)
     {
+        BulletGo = false;
+
         // TODO:弾の種類に応じた処理を行う(今はPlayerのShotのみ)
         //Debug.Log("BulletNum:" + BulletNum);
 
         // 弾生成
         if (null == bulletPrefab) LoadResource();
-        Instantiate<GameObject>(bulletPrefab, pos, Quaternion.Euler(rot));
+        GameObject bullet = Instantiate<GameObject>(bulletPrefab, pos, Quaternion.Euler(rot));
+        bullet.GetComponent<Bullet>().SetAngle(angle);
+
         // 音も出す
         GetObject().GetComponent<AudioSource>().PlayOneShot(shotSE);
-
-        BulletGo = false;
-
 
     }
 
