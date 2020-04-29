@@ -12,6 +12,7 @@ public interface IGameEventReceiver : IEventSystemHandler
     void OnBreakCombo();
     void OnIncreaseScore();
     void OnDamage(OperationTarget target, int damage);
+    void OnLostFish();
 }
 
 

@@ -6,11 +6,17 @@ using UnityEngine.EventSystems;
 
 // TODO:PlayerとEnemyをFlyerみたいなものにまとめてPlayerの移動などは継承して書きたい
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IGameEventReceiver
 {
     // 弾を撃つ際の設定
-    static float shotCycle = 0.2f; // 弾の連射間隔
-    static float waitShotTime = 0.0f; // 現在の連射待ち時間
+    float shotCycle = 0.2f; // 弾の連射間隔
+    float waitShotTime = 0.0f; // 現在の連射待ち時間
+
+    // スライド操作の設定
+    float slideCycle = 3.0f; // 再操作できるまでの時間
+    float waitSlideTime = 3.0f; // 現在の再操作までの待ち時間(初期値は操作可能状態)
+    bool lostBullet = false; // 弾を失っているかどうか(失ってからカウント開始)
+    public Button slideButton; // スライド操作用ボタン表現をこちらでいじる
 
     public float touchMoveSense = 25f; //タッチ操作による移動距離調整用感度
 
@@ -43,6 +49,22 @@ public class PlayerController : MonoBehaviour
     // 右クリック操作用
     Vector2 startRightClickPos = Vector2.zero;
 
+    /* Event受信処理 */
+    // 魚を失った
+    public void OnLostFish()
+    {
+        // 待ち開始
+        lostBullet = true;
+        waitSlideTime = 0;
+    }
+
+    // 何もしないものたち
+    public void OnGameOver() { }
+    public void OnBreakCombo() { }
+    public void OnIncreaseScore() { }
+    public void OnDamage(OperationTarget target, int damage) { }
+
+
     private void Start()
     {
         // 画面範囲設定(動的に) 垂直方向はスクリーン上下、水平方向は左右の壁
@@ -62,11 +84,31 @@ public class PlayerController : MonoBehaviour
 
         gameController = GameObject.FindWithTag("GameController");
 
+        // ゲージを初期化 ボタン自身Image->子オブジェクトImageで[1]指定 微妙...
+        slideButton.GetComponentsInChildren<Image>()[1].fillAmount = 0.0f;
     }
 
     // Update is called once per frame
     void Update()
     {
+        // 待ち時間更新
+        if (shotCycle > waitShotTime)
+        {
+            waitShotTime += Time.deltaTime;
+        }
+        if (slideCycle > waitSlideTime && lostBullet)
+        {
+            waitSlideTime += Time.deltaTime;
+            // 待ち時間中はゲージ表示
+            slideButton.GetComponentsInChildren<Image>()[1].fillAmount = waitSlideTime / slideCycle;
+            if (slideCycle <= waitSlideTime)
+            {
+                // ボタンをトーンアップしてゲージ消去
+                slideButton.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f);
+                slideButton.GetComponentsInChildren<Image>()[1].fillAmount = 0.0f;
+                lostBullet = false;
+            }
+        }
         // Android or iPhoneだったらタッチによる移動操作検出
         // それ以外はマウスによる移動操作　ただしUnity Remoteは携帯端末扱いでタッチ操作
         if (PlatformInfo.IsMobile())
@@ -108,7 +150,7 @@ public class PlayerController : MonoBehaviour
             if (Input.GetMouseButtonDown(1))
             {
                 startRightClickPos = Input.mousePosition;
-                Debug.Log("Right Click Start: " + startRightClickPos);
+                //Debug.Log("Right Click Start: " + startRightClickPos);
             }
             if (Input.GetMouseButtonUp(1))
             {
@@ -128,8 +170,8 @@ public class PlayerController : MonoBehaviour
                         angle = Mathf.Atan2(diffX, diffY) * Mathf.Rad2Deg;
                     }
 
-                    Debug.Log("Right Click End: " + endRightClickPos);
-                    Debug.Log("  diff:(" + diffX + "," + diffY + "), angle:" + angle);
+                    //Debug.Log("Right Click End: " + endRightClickPos);
+                    //Debug.Log("  diff:(" + diffX + "," + diffY + "), angle:" + angle);
                     // 発射
                     ShotBullet(BulletKind.Player_Sakana, angle);
 
@@ -220,18 +262,20 @@ public class PlayerController : MonoBehaviour
                     // 待ち時間クリア
                     waitShotTime = 0.0f;
                 }
-                else
-                {
-                    // 今回は発射せず待ち時間を増加
-                    waitShotTime += Time.deltaTime;
-                }
                 break;
             case BulletKind.Player_Sakana:
-                // TODO:弾が回復していたら放てるようにするがとりあえず今は無条件
-                genRot.z += 360.0f * Random.value; // 向きを少しランダムにいじる
+                if (waitSlideTime >= slideCycle)
+                {
+                    genRot.z += 360.0f * Random.value; // 向きを少しランダムにいじる
 
-                BulletController.ShotBullet(genPos, genRot, BulletKind.Player_Sakana, angle);
+                    BulletController.ShotBullet(genPos, genRot, BulletKind.Player_Sakana, angle);
 
+                    // ボタンをトーンダウンする
+                    slideButton.GetComponent<Image>().color = new Color(0.5f, 0.5f, 0.5f);
+
+                    // 待ち時間クリア
+                    waitSlideTime = 0.0f;
+                }
                 break;
             default:
                 break;
@@ -240,6 +284,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        // 敵と接触
         if ("Enemy" == other.gameObject.tag)
         {
             // エフェクトつける
@@ -268,6 +313,15 @@ public class PlayerController : MonoBehaviour
                     functor: (receiver, eventData) => receiver.OnGameOver()
                 );
             }
+        }
+        // 魚を回収
+        if ("Bullet" == other.gameObject.tag && BulletKind.Player_Sakana == other.GetComponent<Bullet>().bulletKind)
+        {
+            // 待ち時間ゼロ
+            waitSlideTime = slideCycle;
+            slideButton.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f);
+            slideButton.GetComponentsInChildren<Image>()[1].fillAmount = 0.0f;
+            lostBullet = false;
         }
     }
 

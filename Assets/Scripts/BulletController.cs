@@ -74,10 +74,13 @@ public class BulletController : MonoBehaviour
 
     }
 
-    static public void DestroyBullet()
+    static public void DestroyBullet(BulletKind kind)
     {
-        // 次の弾発射OK
-        BulletGo = true;
+        if (BulletKind.Player_Mikan == kind)
+        {
+            // 次の弾発射OK
+            BulletGo = true;
+        }
     }
 
 }

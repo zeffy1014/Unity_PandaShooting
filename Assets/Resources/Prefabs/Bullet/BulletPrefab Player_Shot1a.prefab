@@ -22,6 +22,16 @@ PrefabInstance:
       propertyPath: movSpeed
       value: 15
       objectReference: {fileID: 0}
+    - target: {fileID: 3258776464465187045, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: lifeTime
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3258776464465187045, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: bulletKind
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4061107315494808525, guid: bf27cb9569b096942aa522946fb35f9c,
         type: 3}
       propertyPath: m_Name

@@ -60,7 +60,9 @@ public class GameController : MonoBehaviour, IGameEventReceiver
         posInfo.gameObject.SetActive(validDebug);
 
         // 操作ボタンはモバイル環境だけ有効にする
-        isMobile = PlatformInfo.IsMobile();
+        // TODO:しばらくは常にON
+        // isMobile = PlatformInfo.IsMobile();
+        isMobile = true;
         shotButton.gameObject.SetActive(isMobile);
         slideButton.gameObject.SetActive(isMobile);
     }
@@ -166,7 +168,7 @@ public class GameController : MonoBehaviour, IGameEventReceiver
     
     // 何もしない
     public void OnDamage(OperationTarget target, int damage) { }
-
+    public void OnLostFish() { }
 
     /* 各種状態入場処理 */
     void EntryReady()

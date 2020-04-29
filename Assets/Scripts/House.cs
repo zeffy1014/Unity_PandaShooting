@@ -20,6 +20,7 @@ public class House : MonoBehaviour, IGameEventReceiver
     public void OnGameOver() { }
     public void OnBreakCombo() { }
     public void OnIncreaseScore() { }
+    public void OnLostFish() { }
 
     void Start()
     {

@@ -14,12 +14,14 @@ public class ObjectDestroyer : MonoBehaviour
 
     GameObject gameController;
     GameObject house;
+    GameObject player;
 
     void Start()
     {
         // 開始時にイベントを飛ばす対象を登録しておく
         gameController = GameObject.FindWithTag("GameController");
         house = GameObject.FindWithTag("House");
+        player = GameObject.FindWithTag("Player");
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -28,7 +30,17 @@ public class ObjectDestroyer : MonoBehaviour
         if ("Bullet" == other.tag) {
             if (isDestroyBulletLine || isDestroyLine)
             {
-                BulletController.DestroyBullet();
+                if (BulletKind.Player_Sakana == other.GetComponent<Bullet>().bulletKind)
+                {
+                    // 魚を失いましたイベント出す
+                    ExecuteEvents.Execute<IGameEventReceiver>(
+                       target: player,
+                       eventData: null,
+                       functor: (receiver, eventData) => receiver.OnLostFish()
+                   );
+                }
+
+                BulletController.DestroyBullet(other.GetComponent<Bullet>().bulletKind);
                 Destroy(other.gameObject);
             }
         }
