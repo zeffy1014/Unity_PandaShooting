@@ -5,18 +5,27 @@ using UnityEngine;
 // 弾の種類
 public enum BulletKind
 {
-    None,
     Player_Mikan,
     Player_Sakana,
     Player_Kaju,
 
     Enemy_Point,
     Enemy_Homing,
+
+    BulletKind_Num
 };
 
 public class BulletController : MonoBehaviour
 {
-    static GameObject bulletPrefab = null;  // 弾のPrefab
+    static GameObject[] bulletPrefab = null;  // 弾のPrefab
+    static string[] bulletPrefabPath = new string[(int)BulletKind.BulletKind_Num]
+    {
+        "Prefabs/Bullet/BulletPrefab Player_Shot0a",
+        "Prefabs/Bullet/BulletPrefab Player_Shot1a",
+        "Prefabs/Bullet/BulletPrefab", // ダミー登録
+        "Prefabs/Bullet/BulletPrefab", // ダミー登録
+        "Prefabs/Bullet/BulletPrefab", // ダミー登録
+    };
 
     static public bool BulletGo { get; private set; } = false; // 待たずに発射してよいかどうか
 
@@ -38,7 +47,11 @@ public class BulletController : MonoBehaviour
 
     static void LoadResource()
     {
-        bulletPrefab = (GameObject)Resources.Load("Prefabs/BulletPrefab_shot01");
+        bulletPrefab = new GameObject[(int)BulletKind.BulletKind_Num];
+        for (int i=0; i<(int)BulletKind.BulletKind_Num; i++)
+        {
+            bulletPrefab[i] = (GameObject)Resources.Load(bulletPrefabPath[i]);
+        }
         shotSE = (AudioClip)Resources.Load("Audio/swish1_1");
         return;
     }
@@ -53,7 +66,7 @@ public class BulletController : MonoBehaviour
 
         // 弾生成
         if (null == bulletPrefab) LoadResource();
-        GameObject bullet = Instantiate<GameObject>(bulletPrefab, pos, Quaternion.Euler(rot));
+        GameObject bullet = Instantiate<GameObject>(bulletPrefab[(int)kind], pos, Quaternion.Euler(rot));
         bullet.GetComponent<Bullet>().SetAngle(angle);
 
         // 音も出す

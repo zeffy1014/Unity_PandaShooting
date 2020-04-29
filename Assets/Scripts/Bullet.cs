@@ -4,14 +4,17 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    // 弾の種類で決まるもの
+    // 弾の種類ごとに決まるもの(Prefabとして値を持っておく)
+    public BulletKind bulletKind; // 弾の種類
     public float movSpeed; // 弾速
     public float rotateSpeed; // 回転速度
     public int attack;  // 弾の攻撃力
 
+    // 上記に加えてTagもPrefabで設定しておく
+
+    // 発射時に個別に決めるもの
     float movAngle; // 進行方向(X軸に対する角度)
 
-    GameObject gameController;
 
     // Bullet生成してから進行方向(角度)を設定
     public void SetAngle(float deg)
@@ -22,10 +25,6 @@ public class Bullet : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // 開始時にGameControllerをFindしておく
-        // これに対してSendMessageするのは直接依存しないで済む？
-        gameController = GameObject.FindWithTag("GameController");
-
     }
 
     // Update is called once per frame
