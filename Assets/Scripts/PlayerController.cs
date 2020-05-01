@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
     // スライド操作の設定
     float slideCycle = 3.0f; // 再操作できるまでの時間
     float waitSlideTime = 3.0f; // 現在の再操作までの待ち時間(初期値は操作可能状態)
+    float waitCatchTime = 0.5f; // 弾を回収できるまでの経過時間(この間は弾に触れても回収しない)
     bool lostBullet = false; // 弾を失っているかどうか(失ってからカウント開始)
     public Button slideButton; // スライド操作用ボタン表現をこちらでいじる
 
@@ -317,11 +318,17 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
         // 魚を回収
         if ("Bullet" == other.gameObject.tag && BulletKind.Player_Sakana == other.GetComponent<Bullet>().bulletKind)
         {
-            // 待ち時間ゼロ
-            waitSlideTime = slideCycle;
-            slideButton.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f);
-            slideButton.GetComponentsInChildren<Image>()[1].fillAmount = 0.0f;
-            lostBullet = false;
+            // 一定時間経過していたら回収
+            if (waitCatchTime < other.GetComponent<Bullet>().ElaspedTime)
+            {
+                Destroy(other.gameObject);
+
+                // 待ち時間ゼロ
+                waitSlideTime = slideCycle;
+                slideButton.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f);
+                slideButton.GetComponentsInChildren<Image>()[1].fillAmount = 0.0f;
+                lostBullet = false;
+            }
         }
     }
 

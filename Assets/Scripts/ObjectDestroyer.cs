@@ -26,20 +26,10 @@ public class ObjectDestroyer : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // 弾だったら破棄のお知らせ
         if ("Bullet" == other.tag) {
-            if (isDestroyBulletLine || isDestroyLine)
+            // 反射しない弾だったら廃棄
+            if ((isDestroyBulletLine || isDestroyLine) && !other.GetComponent<Bullet>().reflect)
             {
-                if (BulletKind.Player_Sakana == other.GetComponent<Bullet>().bulletKind)
-                {
-                    // 魚を失いましたイベント出す
-                    ExecuteEvents.Execute<IGameEventReceiver>(
-                       target: player,
-                       eventData: null,
-                       functor: (receiver, eventData) => receiver.OnLostFish()
-                   );
-                }
-
                 BulletController.DestroyBullet(other.GetComponent<Bullet>().bulletKind);
                 Destroy(other.gameObject);
             }

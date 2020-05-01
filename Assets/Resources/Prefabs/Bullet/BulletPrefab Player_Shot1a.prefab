@@ -1,5 +1,21 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!58 &790227248091550061
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8422224765345354692}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 6200000, guid: e44a709d663bf704088e6cb7200473fa, type: 2}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.5
 --- !u!1001 &5528787959192926217
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7,6 +23,36 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5020966952757782419, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: m_BodyType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5020966952757782419, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: m_LinearDrag
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5020966952757782419, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: m_AngularDrag
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -5020966952757782419, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: m_CollisionDetection
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822641171802819471, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2822641171802819471, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3258776464465187045, guid: bf27cb9569b096942aa522946fb35f9c,
         type: 3}
       propertyPath: attack
@@ -15,21 +61,26 @@ PrefabInstance:
     - target: {fileID: 3258776464465187045, guid: bf27cb9569b096942aa522946fb35f9c,
         type: 3}
       propertyPath: rotateSpeed
-      value: 400
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 3258776464465187045, guid: bf27cb9569b096942aa522946fb35f9c,
         type: 3}
       propertyPath: movSpeed
-      value: 15
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 3258776464465187045, guid: bf27cb9569b096942aa522946fb35f9c,
         type: 3}
       propertyPath: lifeTime
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 3258776464465187045, guid: bf27cb9569b096942aa522946fb35f9c,
         type: 3}
       propertyPath: bulletKind
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3258776464465187045, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: reflect
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4061107315494808525, guid: bf27cb9569b096942aa522946fb35f9c,
@@ -113,5 +164,22 @@ PrefabInstance:
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 4466249072700621737, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4466249072700621737, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 4466249072700621737, guid: bf27cb9569b096942aa522946fb35f9c, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: bf27cb9569b096942aa522946fb35f9c, type: 3}
+--- !u!1 &8422224765345354692 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4061107315494808525, guid: bf27cb9569b096942aa522946fb35f9c,
+    type: 3}
+  m_PrefabInstance: {fileID: 5528787959192926217}
+  m_PrefabAsset: {fileID: 0}

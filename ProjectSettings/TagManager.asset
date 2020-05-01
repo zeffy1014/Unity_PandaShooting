@@ -8,6 +8,7 @@ TagManager:
   - FxTemporaire
   - Bullet
   - House
+  - Wall
   layers:
   - Default
   - TransparentFX

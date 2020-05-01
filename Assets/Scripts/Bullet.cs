@@ -11,8 +11,10 @@ public class Bullet : MonoBehaviour
     public float rotateSpeed; // 回転速度
     public int attack;  // 弾の攻撃力
 
+    public bool reflect = false;  // 壁で反射するかどうか
+
     public float lifeTime = 0.0f; // 弾の存在できる時間(0.0fは無限)
-    float elaspedTime = 0.0f; // 発射からの経過時間
+    public float ElaspedTime { get; private set; } = 0.0f; // 発射からの経過時間
 
     // 上記に加えてTagもPrefabで設定しておく
 
@@ -22,10 +24,16 @@ public class Bullet : MonoBehaviour
     GameObject player;
 
 
-    // Bullet生成してから進行方向(角度)を設定
-    public void SetAngle(float deg)
+    // 進行方向(角度)を設定して放つ
+    public void Shot(float deg)
     {
         movAngle = deg;
+        float speedX = movSpeed * Mathf.Sin(movAngle * Mathf.Deg2Rad);
+        float speedY = movSpeed * Mathf.Cos(movAngle * Mathf.Deg2Rad);
+        this.GetComponent<Rigidbody2D>().AddForce(new Vector2(speedX, speedY) * movSpeed);
+
+        this.GetComponent<Rigidbody2D>().AddTorque(rotateSpeed);
+
     }
 
     // Start is called before the first frame update
@@ -33,7 +41,7 @@ public class Bullet : MonoBehaviour
     {
         // 開始時にイベントを飛ばす対象を登録しておく
         player = GameObject.FindWithTag("Player");
-        elaspedTime = 0.0f;
+        ElaspedTime = 0.0f;
     }
 
     // Update is called once per frame
@@ -41,8 +49,8 @@ public class Bullet : MonoBehaviour
     {
         if (0.0f != lifeTime)
         {
-            elaspedTime += Time.deltaTime;
-            if (lifeTime <= elaspedTime)
+            ElaspedTime += Time.deltaTime;
+            if (lifeTime <= ElaspedTime)
             {
                 // 弾の残存時間切れ
                 Destroy(gameObject);
@@ -57,12 +65,14 @@ public class Bullet : MonoBehaviour
                 }
             }
         }
+        /*
         // 弾の向きで速度に影響を出す
         float speedX = movSpeed * Mathf.Sin(movAngle * Mathf.Deg2Rad);
         float speedY = (movSpeed + (Mathf.Cos(transform.rotation.eulerAngles.z * Mathf.Deg2Rad) * 2.0f)) * Mathf.Cos(movAngle * Mathf.Deg2Rad);
         transform.Translate(speedX * Time.deltaTime, speedY * Time.deltaTime, 0, Space.World);
 
         transform.Rotate(0, 0, rotateSpeed * Time.deltaTime);
+        */
     }
 
     private void OnTriggerEnter2D(Collider2D other)

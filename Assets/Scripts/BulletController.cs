@@ -67,7 +67,7 @@ public class BulletController : MonoBehaviour
         // 弾生成
         if (null == bulletPrefab) LoadResource();
         GameObject bullet = Instantiate<GameObject>(bulletPrefab[(int)kind], pos, Quaternion.Euler(rot));
-        bullet.GetComponent<Bullet>().SetAngle(angle);
+        bullet.GetComponent<Bullet>().Shot(angle);
 
         // 音も出す
         GetObject().GetComponent<AudioSource>().PlayOneShot(shotSE);

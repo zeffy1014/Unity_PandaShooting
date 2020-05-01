@@ -7,6 +7,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5020966952757782419, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: m_BodyType
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3258776464465187045, guid: bf27cb9569b096942aa522946fb35f9c,
         type: 3}
       propertyPath: bulletKind
@@ -15,7 +20,7 @@ PrefabInstance:
     - target: {fileID: 3258776464465187045, guid: bf27cb9569b096942aa522946fb35f9c,
         type: 3}
       propertyPath: movSpeed
-      value: 20
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 3258776464465187045, guid: bf27cb9569b096942aa522946fb35f9c,
         type: 3}
@@ -108,5 +113,6 @@ PrefabInstance:
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4466249072700621737, guid: bf27cb9569b096942aa522946fb35f9c, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: bf27cb9569b096942aa522946fb35f9c, type: 3}
