@@ -4,13 +4,21 @@ using UnityEngine;
 
 // TODO:敵の種類に応じて継承して挙動を変える
 
+public enum EnemyType
+{
+    xxx,
+    yyy,
+    EnemyType_Num
+};
+
 public class EnemyController : MonoBehaviour
 {
     float fallSpeed;
     int hp;
-    
+
+    public EnemyType enemyType;
     public float fallSpeedBase;
-    public int hpBase = 1; // TODO:とりあえずHP1で
+    public int hpBase;
 
     public Sprite[] enemySprites;
     SpriteRenderer mainSpriteRenderer;
@@ -67,8 +75,9 @@ public class EnemyController : MonoBehaviour
             audioSource.PlayOneShot(defeatSE);
             Instantiate<GameObject>(defeatEffect, transform.position, Quaternion.identity);
 
-            // スコア加算する TODO:メッセージシステムにする・スコアは敵によって違うようにする
-            gameController.SendMessage("IncreaseScore", SendMessageOptions.DontRequireReceiver);
+            // 敵を倒した通知
+            EventHandlerExtention.SendEvent(new DefeatEnemyEventData(EnemyType.xxx));
+            //gameController.SendMessage("IncreaseScore", SendMessageOptions.DontRequireReceiver);
 
             Destroy(this.gameObject);
         }

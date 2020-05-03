@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: -5020966952757782419}
   - component: {fileID: -7965971047096962514}
   - component: {fileID: 3258776464465187045}
-  - component: {fileID: 4466249072700621737}
   m_Layer: 0
   m_Name: BulletPrefab
   m_TagString: Bullet
@@ -245,19 +244,4 @@ MonoBehaviour:
   attack: 0
   reflect: 0
   lifeTime: 0
---- !u!70 &4466249072700621737
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4061107315494808525}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 6200000, guid: e44a709d663bf704088e6cb7200473fa, type: 2}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.5, y: 1}
-  m_Direction: 0
+  elaspedTime: 0

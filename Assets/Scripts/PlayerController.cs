@@ -16,6 +16,8 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
     float slideCycle = 3.0f; // 再操作できるまでの時間
     float waitSlideTime = 3.0f; // 現在の再操作までの待ち時間(初期値は操作可能状態)
     float waitCatchTime = 0.5f; // 弾を回収できるまでの経過時間(この間は弾に触れても回収しない)
+    float bulletLifeTime; // 弾を放ってから消えるまでの時間
+    float bulletElaspedTime; // 弾を放ってからの経過時間
     bool lostBullet = false; // 弾を失っているかどうか(失ってからカウント開始)
     public Button slideButton; // スライド操作用ボタン表現をこちらでいじる
 
@@ -51,6 +53,13 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
     Vector2 startRightClickPos = Vector2.zero;
 
     /* Event受信処理 */
+    // 魚が放たれた
+    public void OnShotFish(float lifeTime)
+    {
+        bulletLifeTime = (float)(object)lifeTime;
+        bulletElaspedTime = 0.0f;
+    }
+
     // 魚を失った
     public void OnLostFish()
     {
@@ -62,8 +71,8 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
     // 何もしないものたち
     public void OnGameOver() { }
     public void OnBreakCombo() { }
-    public void OnIncreaseScore() { }
-    public void OnDamage(OperationTarget target, int damage) { }
+    public void OnDefeatEnemy(EnemyType type) { }
+    public void OnHouseDamage(int damage) { }
 
 
     private void Start()
@@ -87,6 +96,10 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
 
         // ゲージを初期化 ボタン自身Image->子オブジェクトImageで[1]指定 微妙...
         slideButton.GetComponentsInChildren<Image>()[1].fillAmount = 0.0f;
+
+        // イベント受信用登録
+        EventHandlerExtention.AddListner(this.gameObject, SendEventType.OnShotFish);
+        EventHandlerExtention.AddListner(this.gameObject, SendEventType.OnLostFish);
     }
 
     // Update is called once per frame
@@ -97,6 +110,7 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
         {
             waitShotTime += Time.deltaTime;
         }
+
         if (slideCycle > waitSlideTime && lostBullet)
         {
             waitSlideTime += Time.deltaTime;
@@ -108,8 +122,19 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
                 slideButton.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f);
                 slideButton.GetComponentsInChildren<Image>()[1].fillAmount = 0.0f;
                 lostBullet = false;
+                bulletLifeTime = 0.0f;
             }
         }
+        if (0.0f != bulletLifeTime)
+        {
+            bulletElaspedTime += Time.deltaTime;
+            if (bulletElaspedTime < bulletLifeTime)
+            {
+                // 弾を出している間はゲージ表示
+                slideButton.GetComponentsInChildren<Image>()[1].fillAmount = (bulletLifeTime - bulletElaspedTime) / bulletLifeTime;
+            }
+        }
+
         // Android or iPhoneだったらタッチによる移動操作検出
         // それ以外はマウスによる移動操作　ただしUnity Remoteは携帯端末扱いでタッチ操作
         if (PlatformInfo.IsMobile())
@@ -319,7 +344,7 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
         if ("Bullet" == other.gameObject.tag && BulletKind.Player_Sakana == other.GetComponent<Bullet>().bulletKind)
         {
             // 一定時間経過していたら回収
-            if (waitCatchTime < other.GetComponent<Bullet>().ElaspedTime)
+            if (waitCatchTime < other.GetComponent<Bullet>().elaspedTime)
             {
                 Destroy(other.gameObject);
 
@@ -328,6 +353,7 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
                 slideButton.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f);
                 slideButton.GetComponentsInChildren<Image>()[1].fillAmount = 0.0f;
                 lostBullet = false;
+                bulletLifeTime = 0.0f;
             }
         }
     }

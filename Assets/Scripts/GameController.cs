@@ -44,6 +44,11 @@ public class GameController : MonoBehaviour, IGameEventReceiver
 
         audioSource = GetComponent<AudioSource>();
 
+        // イベント受信登録
+        EventHandlerExtention.AddListner(this.gameObject, SendEventType.OnGameOver);
+        EventHandlerExtention.AddListner(this.gameObject, SendEventType.OnBreakCombo);
+        EventHandlerExtention.AddListner(this.gameObject, SendEventType.OnDefeatEnemy);
+
         // ハイスコア無かったら0で作成
         if (!PlayerPrefs.HasKey("HighScore")) PlayerPrefs.SetInt("HighScore", 0);
 
@@ -102,14 +107,14 @@ public class GameController : MonoBehaviour, IGameEventReceiver
     }
 
     // スコア加算
-    public void IncreaseScore()
+    public void IncreaseScore(int increaseScore)
     {
         // ゲームオーバーでなければ加算
         if (GameState.GameOver != state)
         {
             // スコアとコンボ追加
-            // スコア計算式: 基礎点 + コンボ数*ボーナス点
-            score += (baseScore + combo * bonusScore);
+            // スコア計算式: 敵の種類に応じた得点 + コンボ数*ボーナス点
+            score += (increaseScore + combo * bonusScore);
             scoreLabel.text = "Score : " + score;
             combo++;
             comboLabel.text = "Combo : " + combo;
@@ -161,13 +166,16 @@ public class GameController : MonoBehaviour, IGameEventReceiver
     }
 
     // スコア加算
-    public void OnIncreaseScore()
+    public void OnDefeatEnemy(EnemyType type)
     {
-        IncreaseScore();
+        // TODO:敵の種類からスコアを出す
+        int increasScore = 100;
+        IncreaseScore(increasScore);
     }
     
     // 何もしない
-    public void OnDamage(OperationTarget target, int damage) { }
+    public void OnHouseDamage(int damage) { }
+    public void OnShotFish(float lifeTime) { }
     public void OnLostFish() { }
 
     /* 各種状態入場処理 */

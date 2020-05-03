@@ -11,22 +11,22 @@ public class House : MonoBehaviour, IGameEventReceiver
 
     /* Event受信処理 */
     // ダメージ発生
-    public void OnDamage(OperationTarget target, int damage)
+    public void OnHouseDamage(int damage)
     {
-        if (OperationTarget.House == target) hpGauge.OnDamage(damage);
+        hpGauge.OnDamage(damage);
     }
 
     // 何もしないものたち
     public void OnGameOver() { }
     public void OnBreakCombo() { }
-    public void OnIncreaseScore() { }
+    public void OnDefeatEnemy(EnemyType enemyType) { }
+    public void OnShotFish(float lifeTime) { }
     public void OnLostFish() { }
 
     void Start()
     {
-        // 日時Text取得・更新
-        // dateTime = this.GetComponentInChildren<Text>();
-        // dateTime.text = DateTime.Now.ToString("yyyy-MM-dd ddd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture);
+        // イベント受信登録
+        EventHandlerExtention.AddListner(this.gameObject, SendEventType.OnHouseDamage);
     }
 
     void Update()

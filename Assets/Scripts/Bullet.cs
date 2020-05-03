@@ -14,7 +14,7 @@ public class Bullet : MonoBehaviour
     public bool reflect = false;  // 壁で反射するかどうか
 
     public float lifeTime = 0.0f; // 弾の存在できる時間(0.0fは無限)
-    public float ElaspedTime { get; private set; } = 0.0f; // 発射からの経過時間
+    public float elaspedTime = 0.0f; // 発射からの経過時間
 
     // 上記に加えてTagもPrefabで設定しておく
 
@@ -41,7 +41,18 @@ public class Bullet : MonoBehaviour
     {
         // 開始時にイベントを飛ばす対象を登録しておく
         player = GameObject.FindWithTag("Player");
-        ElaspedTime = 0.0f;
+        elaspedTime = 0.0f;
+
+        if (BulletKind.Player_Sakana == bulletKind)
+        {
+            // 魚を放ちましたイベント出す
+            EventHandlerExtention.SendEvent(new ShotFishEventData(3.0f));
+/*            ExecuteEvents.Execute<IGameEventReceiver>(
+               target: player,
+               eventData: null,
+               functor: (receiver, eventData) => receiver.OnShotFish(this.lifeTime)
+           );*/
+        }
     }
 
     // Update is called once per frame
@@ -49,8 +60,8 @@ public class Bullet : MonoBehaviour
     {
         if (0.0f != lifeTime)
         {
-            ElaspedTime += Time.deltaTime;
-            if (lifeTime <= ElaspedTime)
+            elaspedTime += Time.deltaTime;
+            if (lifeTime <= elaspedTime)
             {
                 // 弾の残存時間切れ
                 Destroy(gameObject);

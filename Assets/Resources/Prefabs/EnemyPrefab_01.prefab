@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 8866115673948622519}
   - component: {fileID: 8866115673948622512}
   - component: {fileID: 8866115673948622513}
-  - component: {fileID: 5920191006166416127}
   - component: {fileID: 8603186280688702763}
+  - component: {fileID: 1700938438480683869}
   m_Layer: 0
   m_Name: EnemyPrefab_01
   m_TagString: Enemy
@@ -96,6 +96,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c16b4666db1190468c124a7868cef9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemyType: 0
   fallSpeedBase: 3
   hpBase: 1
   enemySprites:
@@ -104,8 +105,24 @@ MonoBehaviour:
   - {fileID: -8480004912693699175, guid: cc8ecf146826a7d49a42dc94c8344c94, type: 3}
   defeatEffect: {fileID: 7939302427467974438, guid: 09ea7ec0501cb8b4aa1b040e6d791668,
     type: 3}
-  defeatSE: {fileID: 8300000, guid: 85abe48da194cba4fb9327eb35ed66ca, type: 3}
---- !u!50 &5920191006166416127
+  defeatSE: {fileID: 8300000, guid: a610a41196f17484abdc7e520d21a868, type: 3}
+--- !u!58 &8603186280688702763
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8866115673948622514}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 0.25
+--- !u!50 &1700938438480683869
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0
@@ -126,19 +143,3 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!58 &8603186280688702763
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8866115673948622514}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 0.25

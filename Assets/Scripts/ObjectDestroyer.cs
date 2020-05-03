@@ -26,7 +26,7 @@ public class ObjectDestroyer : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if ("Bullet" == other.tag) {
+        if ("Bullet" == other.gameObject.tag) {
             // 反射しない弾だったら廃棄
             if ((isDestroyBulletLine || isDestroyLine) && !other.GetComponent<Bullet>().reflect)
             {
@@ -50,14 +50,17 @@ public class ObjectDestroyer : MonoBehaviour
         // 敵が家ダメージのオブジェクトに触れた場合
         if (isDamageHouseLine)
         {
-            if("Enemy" == other.tag)
+            if("Enemy" == other.gameObject.tag)
             {
                 // TODO:ダメージはとりあえず300固定、ただ敵に応じて決めたい
+                EventHandlerExtention.SendEvent(new HouseDamageEventData(300));
+                /*
                 ExecuteEvents.Execute<IGameEventReceiver>(
                     target: house,
                     eventData: null,
-                    functor: (receiver, eventData) => receiver.OnDamage(OperationTarget.House, 300)
-                );
+                    functor: (receiver, eventData) => receiver.OnHouseDamage(300)
+                );*/
+
             }
         }
 
@@ -69,6 +72,7 @@ public class ObjectDestroyer : MonoBehaviour
                 eventData: null,
                 functor: (receiver, eventData) => receiver.OnGameOver()
             );
+            Destroy(other.gameObject);
         }
     }
 }

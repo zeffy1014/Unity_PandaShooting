@@ -4,18 +4,6 @@ using UnityEngine;
 
 using UnityEngine.EventSystems;
 
-/*** メッセージシステム受信用のInterface ***/
-// ゲーム制御
-public interface IGameEventReceiver : IEventSystemHandler
-{
-    void OnGameOver();
-    void OnBreakCombo();
-    void OnIncreaseScore();
-    void OnDamage(OperationTarget target, int damage);
-    void OnLostFish();
-}
-
-
 /*** 共通enum定義 ***/
 // ゲームステート
 public enum GameState
@@ -25,15 +13,6 @@ public enum GameState
     Play,
     GameOver
 };
-
-// 処理ターゲット
-public enum OperationTarget
-{
-    None,
-    Player,
-    House
-};
-
 
 // 動作プラットフォーム判断
 public class PlatformInfo

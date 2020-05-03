@@ -41,6 +41,7 @@ public class HouseGauge : MonoBehaviour
     {
         // 開始時にイベントを飛ばす対象を登録しておく
         gameController = GameObject.FindWithTag("GameController");
+
     }
 
     public void OnDamage(int damage)
