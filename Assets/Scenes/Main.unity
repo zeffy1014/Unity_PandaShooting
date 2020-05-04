@@ -3750,6 +3750,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 661432048}
     m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: isDestroyLine
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: isDestroyBulletLine
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5019821163970501704, guid: df1963374cdc55844a93c6f84455f907,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3815,16 +3823,6 @@ PrefabInstance:
       propertyPath: m_LocalScale.y
       value: 19
       objectReference: {fileID: 0}
-    - target: {fileID: 5019821163970501707, guid: df1963374cdc55844a93c6f84455f907,
-        type: 3}
-      propertyPath: isDestroyLine
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5019821163970501707, guid: df1963374cdc55844a93c6f84455f907,
-        type: 3}
-      propertyPath: isDestroyBulletLine
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5019821163970501708, guid: df1963374cdc55844a93c6f84455f907,
         type: 3}
       propertyPath: m_Name
@@ -3834,6 +3832,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8183667807708470241, guid: df1963374cdc55844a93c6f84455f907,
+        type: 3}
+      propertyPath: isDestroyBulletLine
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8183667807708470241, guid: df1963374cdc55844a93c6f84455f907,
+        type: 3}
+      propertyPath: isDestroyLine
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: df1963374cdc55844a93c6f84455f907, type: 3}
@@ -4626,35 +4634,25 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5019821163970501707, guid: df1963374cdc55844a93c6f84455f907,
-        type: 3}
-      propertyPath: isDeadLine
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5019821163970501707, guid: df1963374cdc55844a93c6f84455f907,
-        type: 3}
-      propertyPath: isDestroyBulletLine
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5019821163970501707, guid: df1963374cdc55844a93c6f84455f907,
-        type: 3}
-      propertyPath: isDamageHouseLine
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5019821163970501707, guid: df1963374cdc55844a93c6f84455f907,
-        type: 3}
-      propertyPath: house
-      value: 
-      objectReference: {fileID: 210587201}
     - target: {fileID: 5019821163970501708, guid: df1963374cdc55844a93c6f84455f907,
         type: 3}
       propertyPath: m_Name
       value: Wall_Back
       objectReference: {fileID: 0}
-    - target: {fileID: 5019821163970501710, guid: df1963374cdc55844a93c6f84455f907,
+    - target: {fileID: 8183667807708470241, guid: df1963374cdc55844a93c6f84455f907,
         type: 3}
-      propertyPath: m_Enabled
-      value: 0
+      propertyPath: isDestroyLine
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8183667807708470241, guid: df1963374cdc55844a93c6f84455f907,
+        type: 3}
+      propertyPath: isDamageHouseLine
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8183667807708470241, guid: df1963374cdc55844a93c6f84455f907,
+        type: 3}
+      propertyPath: isDestroyBulletLine
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: df1963374cdc55844a93c6f84455f907, type: 3}
@@ -4859,6 +4857,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 661432048}
     m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: isDestroyLine
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: isDestroyBulletLine
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5019821163970501704, guid: df1963374cdc55844a93c6f84455f907,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -4924,16 +4930,6 @@ PrefabInstance:
       propertyPath: m_LocalScale.y
       value: 19
       objectReference: {fileID: 0}
-    - target: {fileID: 5019821163970501707, guid: df1963374cdc55844a93c6f84455f907,
-        type: 3}
-      propertyPath: isDestroyLine
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5019821163970501707, guid: df1963374cdc55844a93c6f84455f907,
-        type: 3}
-      propertyPath: isDestroyBulletLine
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5019821163970501708, guid: df1963374cdc55844a93c6f84455f907,
         type: 3}
       propertyPath: m_Name
@@ -4943,6 +4939,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8183667807708470241, guid: df1963374cdc55844a93c6f84455f907,
+        type: 3}
+      propertyPath: isDestroyBulletLine
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8183667807708470241, guid: df1963374cdc55844a93c6f84455f907,
+        type: 3}
+      propertyPath: isDestroyLine
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: df1963374cdc55844a93c6f84455f907, type: 3}
@@ -5032,6 +5038,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 661432048}
     m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: isDestroyLine
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5019821163970501704, guid: df1963374cdc55844a93c6f84455f907,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -5087,11 +5097,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5019821163970501707, guid: df1963374cdc55844a93c6f84455f907,
-        type: 3}
-      propertyPath: isDestroyLine
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5019821163970501708, guid: df1963374cdc55844a93c6f84455f907,
         type: 3}
       propertyPath: m_Name
@@ -5101,6 +5106,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8183667807708470241, guid: df1963374cdc55844a93c6f84455f907,
+        type: 3}
+      propertyPath: isDestroyBulletLine
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: df1963374cdc55844a93c6f84455f907, type: 3}

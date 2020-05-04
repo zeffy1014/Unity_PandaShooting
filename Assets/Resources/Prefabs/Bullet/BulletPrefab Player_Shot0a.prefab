@@ -7,6 +7,46 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -7965971047096962514, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: m_Parameters.colorGradient.ctime1
+      value: 38743
+      objectReference: {fileID: 0}
+    - target: {fileID: -7965971047096962514, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: m_Parameters.colorGradient.key0.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7965971047096962514, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: m_Parameters.colorGradient.key0.g
+      value: 0.91337687
+      objectReference: {fileID: 0}
+    - target: {fileID: -7965971047096962514, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: m_Parameters.colorGradient.key0.b
+      value: 0.759434
+      objectReference: {fileID: 0}
+    - target: {fileID: -7965971047096962514, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: m_Parameters.colorGradient.key1.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7965971047096962514, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: m_Parameters.colorGradient.key1.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7965971047096962514, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: m_Parameters.colorGradient.key1.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7965971047096962514, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: m_Parameters.widthCurve.m_Curve.Array.data[0].value
+      value: 0.27492905
+      objectReference: {fileID: 0}
     - target: {fileID: -5020966952757782419, guid: bf27cb9569b096942aa522946fb35f9c,
         type: 3}
       propertyPath: m_BodyType
