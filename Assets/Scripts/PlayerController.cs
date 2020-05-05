@@ -52,7 +52,8 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
     // 右クリック操作用
     Vector2 startRightClickPos = Vector2.zero;
 
-    /* Event受信処理 */
+
+    /***** IGameEventReceiverイベント処理 ****************************************************/
     // 魚が放たれた
     public void OnShotFish(float lifeTime)
     {
@@ -68,13 +69,13 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
         waitSlideTime = 0;
     }
 
-    // 何もしないものたち
+    // その他：空実装
     public void OnGameOver() { }
     public void OnBreakCombo() { }
     public void OnDefeatEnemy(EnemyType type) { }
     public void OnHouseDamage(int damage) { }
 
-
+    /***** MonoBehaviourイベント処理 ****************************************************/
     private void Start()
     {
         // 画面範囲設定(動的に) 垂直方向はスクリーン上下、水平方向は左右の壁
@@ -147,6 +148,50 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
         }
     }
 
+    /***** Collider2Dイベント処理 ****************************************************/
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        // 敵と接触
+        if ("Enemy" == other.gameObject.tag)
+        {
+            // エフェクトつける
+            Instantiate(damageEffect, transform.position, Quaternion.identity);
+            // 音も鳴らす
+            audioSource.PlayOneShot(damageSE);
+
+            Destroy(other.gameObject);
+
+            Life--;
+            lifePanel.UpdateLife(Life);
+
+            // コンボ切れる
+            EventHandlerExtention.SendEvent(new BreakComboEventData());
+
+            // ライフ無くなったらGameOver処理してもらう
+            if (0 >= Life)
+            {
+                EventHandlerExtention.SendEvent(new GameOverEventData());
+            }
+        }
+        // 魚を回収
+        if ("Bullet" == other.gameObject.tag && BulletKind.Player_Sakana == other.GetComponent<Bullet>().bulletKind)
+        {
+            // 一定時間経過していたら回収
+            if (waitCatchTime < other.GetComponent<Bullet>().elaspedTime)
+            {
+                Destroy(other.gameObject);
+
+                // 待ち時間ゼロ
+                waitSlideTime = slideCycle;
+                slideButton.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f);
+                slideButton.GetComponentsInChildren<Image>()[1].fillAmount = 0.0f;
+                lostBullet = false;
+                bulletLifeTime = 0.0f;
+            }
+        }
+    }
+
+    /***** PlayerController個別処理 ****************************************************/
     private void OnMouseOperation()
     {
         // マウス位置(スクリーン座標)をワールド座標へ変換
@@ -305,56 +350,6 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
                 break;
             default:
                 break;
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        // 敵と接触
-        if ("Enemy" == other.gameObject.tag)
-        {
-            // エフェクトつける
-            Instantiate(damageEffect, transform.position, Quaternion.identity);
-            // 音も鳴らす
-            audioSource.PlayOneShot(damageSE);
-
-            Destroy(other.gameObject);
-
-            Life--;
-            lifePanel.UpdateLife(Life);
-
-            // コンボ切れる
-            ExecuteEvents.Execute<IGameEventReceiver>(
-                target: gameController,
-                eventData: null,
-                functor: (receiver, eventData) => receiver.OnBreakCombo()
-            );
-
-            // ライフ無くなったらGameOver処理してもらう
-            if (0 >= Life)
-            {
-                ExecuteEvents.Execute<IGameEventReceiver>(
-                    target: gameController,
-                    eventData: null,
-                    functor: (receiver, eventData) => receiver.OnGameOver()
-                );
-            }
-        }
-        // 魚を回収
-        if ("Bullet" == other.gameObject.tag && BulletKind.Player_Sakana == other.GetComponent<Bullet>().bulletKind)
-        {
-            // 一定時間経過していたら回収
-            if (waitCatchTime < other.GetComponent<Bullet>().elaspedTime)
-            {
-                Destroy(other.gameObject);
-
-                // 待ち時間ゼロ
-                waitSlideTime = slideCycle;
-                slideButton.GetComponent<Image>().color = new Color(1.0f, 1.0f, 1.0f);
-                slideButton.GetComponentsInChildren<Image>()[1].fillAmount = 0.0f;
-                lostBullet = false;
-                bulletLifeTime = 0.0f;
-            }
         }
     }
 

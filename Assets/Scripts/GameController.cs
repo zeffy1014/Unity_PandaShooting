@@ -36,7 +36,35 @@ public class GameController : MonoBehaviour, IGameEventReceiver
 
     private bool isMobile = false;  // モバイル環境かどうか
 
-    // Start is called before the first frame update
+    /***** IGameEventReceiverイベント処理 ****************************************************/
+    // コンボ切れ
+    public void OnBreakCombo()
+    {
+        combo = 0;
+        comboLabel.text = "Combo : " + combo;
+    }
+
+    // ゲームオーバー…
+    public void OnGameOver()
+    {
+        // Debug Mode中でなければゲームオーバー
+        if (!debugMode.isOn) if (GameState.Play == state) player.ForceGameOver();
+    }
+
+    // 敵を撃破
+    public void OnDefeatEnemy(EnemyType type)
+    {
+        // TODO:敵の種類からスコアを出す
+        int increasScore = 100;
+        IncreaseScore(increasScore);
+    }
+
+    // その他：空実装
+    public void OnHouseDamage(int damage) { }
+    public void OnShotFish(float lifeTime) { }
+    public void OnLostFish() { }
+
+    /***** MonoBehaviourイベント処理 ****************************************************/
     void Start()
     {
         // 開始時はReady状態
@@ -106,6 +134,7 @@ public class GameController : MonoBehaviour, IGameEventReceiver
         }
     }
 
+    /***** GameController個別処理 ****************************************************/
     // スコア加算
     public void IncreaseScore(int increaseScore)
     {
@@ -150,35 +179,8 @@ public class GameController : MonoBehaviour, IGameEventReceiver
         stateLabel.text = "";
     }
 
-    /* 各種Event受信処理 */
-    // コンボ切れ
-    public void OnBreakCombo()
-    {
-        combo = 0;
-        comboLabel.text = "Combo : " + combo;
-    }
 
-    // ゲームオーバー…
-    public void OnGameOver()
-    {
-        // Debug Mode中でなければゲームオーバー
-        if (!debugMode.isOn) if (GameState.Play == state) player.ForceGameOver();
-    }
-
-    // スコア加算
-    public void OnDefeatEnemy(EnemyType type)
-    {
-        // TODO:敵の種類からスコアを出す
-        int increasScore = 100;
-        IncreaseScore(increasScore);
-    }
-    
-    // 何もしない
-    public void OnHouseDamage(int damage) { }
-    public void OnShotFish(float lifeTime) { }
-    public void OnLostFish() { }
-
-    /* 各種状態入場処理 */
+    /***** 各種状態遷移処理 ****************************************************/
     void EntryReady()
     {
         state = GameState.Ready;

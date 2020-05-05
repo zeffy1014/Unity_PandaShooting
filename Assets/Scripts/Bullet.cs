@@ -39,19 +39,12 @@ public class Bullet : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // 開始時にイベントを飛ばす対象を登録しておく
-        player = GameObject.FindWithTag("Player");
         elaspedTime = 0.0f;
 
         if (BulletKind.Player_Sakana == bulletKind)
         {
             // 魚を放ちましたイベント出す
-            EventHandlerExtention.SendEvent(new ShotFishEventData(3.0f));
-/*            ExecuteEvents.Execute<IGameEventReceiver>(
-               target: player,
-               eventData: null,
-               functor: (receiver, eventData) => receiver.OnShotFish(this.lifeTime)
-           );*/
+            EventHandlerExtention.SendEvent(new ShotFishEventData(this.lifeTime));
         }
     }
 
@@ -68,11 +61,7 @@ public class Bullet : MonoBehaviour
                 if (BulletKind.Player_Sakana == bulletKind)
                 {
                     // 魚を失いましたイベント出す
-                    ExecuteEvents.Execute<IGameEventReceiver>(
-                       target: player,
-                       eventData: null,
-                       functor: (receiver, eventData) => receiver.OnLostFish()
-                   );
+                    EventHandlerExtention.SendEvent(new LostFishEventData());
                 }
             }
         }

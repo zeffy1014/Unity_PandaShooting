@@ -12,16 +12,8 @@ public class ObjectDestroyer : MonoBehaviour
     public bool isDestroyLine = true;        // 触れたらなんでも削除
     public bool isDamageHouseLine = false;   // 触れたら家にダメージ
 
-    GameObject gameController;
-    GameObject house;
-    GameObject player;
-
     void Start()
     {
-        // 開始時にイベントを飛ばす対象を登録しておく
-        gameController = GameObject.FindWithTag("GameController");
-        house = GameObject.FindWithTag("House");
-        player = GameObject.FindWithTag("Player");
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -38,12 +30,6 @@ public class ObjectDestroyer : MonoBehaviour
             if (isDestroyLine)
             {
                 Destroy(other.gameObject);
-
-                ExecuteEvents.Execute<IGameEventReceiver>(
-                    target: gameController,
-                    eventData: null,
-                    functor: (receiver, eventData) => receiver.OnBreakCombo()
-                );
             }
         }
 
@@ -54,24 +40,15 @@ public class ObjectDestroyer : MonoBehaviour
             {
                 // TODO:ダメージはとりあえず300固定、ただ敵に応じて決めたい
                 EventHandlerExtention.SendEvent(new HouseDamageEventData(300));
-                /*
-                ExecuteEvents.Execute<IGameEventReceiver>(
-                    target: house,
-                    eventData: null,
-                    functor: (receiver, eventData) => receiver.OnHouseDamage(300)
-                );*/
-
+                EventHandlerExtention.SendEvent(new BreakComboEventData());
             }
         }
 
         // ゲームオーバーのトリガーとなるオブジェクトに触れた場合
         if (isDeadLine)
         {
-            ExecuteEvents.Execute<IGameEventReceiver>(
-                target: gameController,
-                eventData: null,
-                functor: (receiver, eventData) => receiver.OnGameOver()
-            );
+            EventHandlerExtention.SendEvent(new GameOverEventData());
+
             Destroy(other.gameObject);
         }
     }

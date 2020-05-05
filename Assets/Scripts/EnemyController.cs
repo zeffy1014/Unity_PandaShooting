@@ -29,17 +29,9 @@ public class EnemyController : MonoBehaviour
     static GameObject tempObject = null;
     static AudioSource audioSource = null;
 
-    static GameObject gameController = null;
-
     // Start is called before the first frame update
     void Start()
     {
-        // 開始時にイベントを飛ばす対象を登録しておく
-        if (null == gameController)
-        {
-            gameController = GameObject.FindWithTag("GameController");
-        }
-
         // 各種初期化
         fallSpeed = 3.0f * Random.value + fallSpeedBase;
         hp = hpBase;

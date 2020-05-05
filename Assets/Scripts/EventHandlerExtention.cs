@@ -74,14 +74,14 @@ class ShotFishEventData : SendEventDataBase //魚を放ちました通知
 }
 class LostFishEventData : SendEventDataBase //魚を失いました通知
 {
-    public LostFishEventData(float lifeTime) { type = SendEventType.OnLostFish; }
+    public LostFishEventData() { type = SendEventType.OnLostFish; }
 }
 
 
 /*** イベント送受信モジュール ***/
 class EventHandlerExtention
 {
-    static List<GameObject>[] listnerList = new List<GameObject>[(int)SendEventType.EventNum];
+    static List<GameObject>[] listnerList = new List<GameObject>[(int)SendEventType.EventNum];  // イベント受信登録者List
     static EventHandlerExtention()
     {
         for(int i=0; i< (int)SendEventType.EventNum; i++)
@@ -90,19 +90,20 @@ class EventHandlerExtention
         }
     }
 
+    // イベント受信登録
     public static void AddListner(GameObject go, SendEventType type)
     {
         listnerList[(int)type].Add(go);
     }
 
-    /*** イベント送信 ***/
+    // イベント送信処理
     public static void SendEvent(SendEventDataBase eventData)
     {
         // イベント種別と対応するListenerを取得
         SendEventType type = eventData.GetEventType();
         if (null == listnerList[(int)type]) return;
 
-        // 各種処理
+        // 実際の各種処理
         void Callback(IGameEventReceiver receiver, BaseEventData data)
         {
             switch (type)
@@ -161,6 +162,7 @@ class EventHandlerExtention
             return;
         }
  
+        // メッセージシステムで順次処理を呼び出す
         foreach (GameObject listner in listnerList[(int)type])
         {
             if (null != listner)

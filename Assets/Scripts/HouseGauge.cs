@@ -20,8 +20,6 @@ public class HouseGauge : MonoBehaviour
     private Vector4 healColor;
     private float waitHeal;
 
-    GameObject gameController;
-
     void Awake()
     {
         // 各種初期化
@@ -39,9 +37,6 @@ public class HouseGauge : MonoBehaviour
 
     void Start()
     {
-        // 開始時にイベントを飛ばす対象を登録しておく
-        gameController = GameObject.FindWithTag("GameController");
-
     }
 
     public void OnDamage(int damage)
@@ -52,11 +47,7 @@ public class HouseGauge : MonoBehaviour
         if (trueHp <= 0)
         {
             trueHp = 0;
-            ExecuteEvents.Execute<IGameEventReceiver>(
-                target: gameController,
-                eventData: null,
-                functor: (receiver, eventData) => receiver.OnGameOver()
-            );
+            EventHandlerExtention.SendEvent(new GameOverEventData());
         }
     }
 
