@@ -6,8 +6,11 @@ using UnityEngine;
 
 public enum EnemyType
 {
-    xxx,
-    yyy,
+    Fly,
+    Mosquito,
+    G,
+    G_eggs,
+
     EnemyType_Num
 };
 
@@ -20,8 +23,8 @@ public class EnemyController : MonoBehaviour
     public float fallSpeedBase;
     public int hpBase;
 
-    public Sprite[] enemySprites;
-    SpriteRenderer mainSpriteRenderer;
+    //public Sprite enemySprite;
+    //SpriteRenderer mainSpriteRenderer;
 
     // 撃破時のエフェクトと音
     public GameObject defeatEffect;
@@ -33,15 +36,21 @@ public class EnemyController : MonoBehaviour
     void Start()
     {
         // 各種初期化
-        fallSpeed = 3.0f * Random.value + fallSpeedBase;
+        // とりあえず背景スクロールスピードを加算する(固定的が背景と一緒にスクロールする)
+        fallSpeed = fallSpeedBase + BGController.scrollSpeed;
+        // もともと速度があるものはランダムで上乗せ
+        fallSpeed += (fallSpeedBase - BGController.scrollSpeed) * Random.Range(0.0f, 0.5f);
+
         hp = hpBase;
 
         // 表示画像をランダムで選択(TODO:いずれは生成側で指定)
+        /*
         mainSpriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         Sprite sprite = null;
         int index = Random.Range(0, enemySprites.Length);
         sprite = enemySprites[index];
         mainSpriteRenderer.sprite = sprite;
+        */
     }
 
     // Update is called once per frame
@@ -68,7 +77,7 @@ public class EnemyController : MonoBehaviour
             Instantiate<GameObject>(defeatEffect, transform.position, Quaternion.identity);
 
             // 敵を倒した通知
-            EventHandlerExtention.SendEvent(new DefeatEnemyEventData(EnemyType.xxx));
+            EventHandlerExtention.SendEvent(new DefeatEnemyEventData(enemyType));
             //gameController.SendMessage("IncreaseScore", SendMessageOptions.DontRequireReceiver);
 
             Destroy(this.gameObject);

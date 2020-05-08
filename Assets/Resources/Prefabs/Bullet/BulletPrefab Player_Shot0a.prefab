@@ -52,6 +52,16 @@ PrefabInstance:
       propertyPath: m_BodyType
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 550378323156604716, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 0.0001
+      objectReference: {fileID: 0}
+    - target: {fileID: 550378323156604716, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 0.4
+      objectReference: {fileID: 0}
     - target: {fileID: 3258776464465187045, guid: bf27cb9569b096942aa522946fb35f9c,
         type: 3}
       propertyPath: bulletKind
@@ -151,6 +161,21 @@ PrefabInstance:
     - target: {fileID: 4061107315494808527, guid: bf27cb9569b096942aa522946fb35f9c,
         type: 3}
       propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4061107315494808527, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4061107315494808527, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4061107315494808527, guid: bf27cb9569b096942aa522946fb35f9c,
+        type: 3}
+      propertyPath: m_Color.b
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:

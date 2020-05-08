@@ -339,36 +339,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!1 &12428552
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 12428553}
-  m_Layer: 0
-  m_Name: GameObject
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &12428553
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 12428552}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 919960864}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &49374021
 GameObject:
   m_ObjectHideFlags: 0
@@ -710,7 +680,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d827a1a23b3a924c82390181e2917bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scrollSpeed: 1
 --- !u!1 &144692690
 GameObject:
   m_ObjectHideFlags: 0
@@ -1727,7 +1696,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d827a1a23b3a924c82390181e2917bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scrollSpeed: 1
 --- !u!1 &421626826
 GameObject:
   m_ObjectHideFlags: 0
@@ -2582,7 +2550,6 @@ Transform:
   m_Children:
   - {fileID: 96456964}
   - {fileID: 1134366331}
-  - {fileID: 12428553}
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3144,8 +3111,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c67778f559488a40947df5ba837b8d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyPrefab: {fileID: 8866115673948622514, guid: 8a49af0751cca084aa3918d9f2e57a7a,
-    type: 3}
+  gameArea: {fileID: 1465424218}
 --- !u!4 &1213693650
 Transform:
   m_ObjectHideFlags: 0
@@ -3935,7 +3901,7 @@ GameObject:
   - component: {fileID: 1465424219}
   - component: {fileID: 1465424220}
   m_Layer: 0
-  m_Name: Mask
+  m_Name: GameArea(mask)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

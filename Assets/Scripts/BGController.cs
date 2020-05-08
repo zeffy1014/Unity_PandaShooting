@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BGController : MonoBehaviour
 {
-    public float scrollSpeed = 1.0f;
+    public static float scrollSpeed = 0.5f;
     float spriteHeight;
 
     // Start is called before the first frame update
