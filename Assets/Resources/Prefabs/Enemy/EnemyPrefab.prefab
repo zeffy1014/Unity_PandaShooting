@@ -98,6 +98,8 @@ MonoBehaviour:
   enemyType: 4
   fallSpeedBase: 3
   hpBase: 10
+  damageMaterial: {fileID: 2100000, guid: 3c710dedb4f45614fbf8073b3c965640, type: 2}
+  normalMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   defeatEffect: {fileID: 7939302427467974438, guid: 09ea7ec0501cb8b4aa1b040e6d791668,
     type: 3}
   defeatSE: {fileID: 8300000, guid: a610a41196f17484abdc7e520d21a868, type: 3}
