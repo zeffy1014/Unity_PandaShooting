@@ -38,6 +38,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+    - target: {fileID: 8866115673948622512, guid: 8a49af0751cca084aa3918d9f2e57a7a,
+        type: 3}
+      propertyPath: m_FlipY
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8866115673948622513, guid: 8a49af0751cca084aa3918d9f2e57a7a,
         type: 3}
       propertyPath: enemyType

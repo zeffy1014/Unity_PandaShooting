@@ -28,6 +28,11 @@ PrefabInstance:
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8866115673948622512, guid: 8a49af0751cca084aa3918d9f2e57a7a,
+        type: 3}
+      propertyPath: m_FlipY
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8866115673948622513, guid: 8a49af0751cca084aa3918d9f2e57a7a,
         type: 3}
       propertyPath: enemyType

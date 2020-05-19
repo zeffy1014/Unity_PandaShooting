@@ -16,11 +16,18 @@ public enum EnemyType
 
 public class EnemyController : MonoBehaviour
 {
+    // 共通で必要に応じて参照する自機
+    static GameObject player = null;
+
     public EnemyType enemyType;
 
     // 移動速度
     public float fallSpeedBase;
     float fallSpeed;
+
+    // 旋回速度
+    public float rotateSpeedBase;
+    float rotateSpeed;
 
     // HP
     public int hpBase;
@@ -42,26 +49,77 @@ public class EnemyController : MonoBehaviour
     static GameObject tempObject = null;
     static AudioSource audioSource = null;
 
-    // Start is called before the first frame update
+
+    /***** MonoBehaviourイベント処理 ****************************************************/
     void Start()
     {
         // 各種初期化
+        // 自機取得
+        if (null == player) player = GameObject.FindWithTag("Player");
+
         // とりあえず背景スクロールスピードを加算する(移動ゼロの敵は背景と一緒にスクロールする)
         fallSpeed = fallSpeedBase + BGController.scrollSpeed;
         // もともと速度があるものはランダムで上乗せ(1.0-1.5倍)
-        fallSpeed += (fallSpeedBase - BGController.scrollSpeed) * Random.Range(0.0f, 0.5f);
+        fallSpeed += (fallSpeed - BGController.scrollSpeed) * Random.Range(0.0f, 0.5f);
+
+        // 旋回速度は特にいじらない
+        rotateSpeed = rotateSpeedBase;
 
         hp = hpBase;
 
     }
 
-    // Update is called once per frame
     void Update()
     {
-        transform.Translate(0, -fallSpeed * Time.deltaTime, 0, Space.World);
+        // 移動計算用の角度 画像の関係で90度回った状態なので注意
+        float nowAngle = 90.0f + transform.rotation.eulerAngles.z;
+
+        // 種別ごとにやることが違う とりあえず書いていく
+        switch (this.enemyType)
+        {
+            case EnemyType.Fly:
+                // ハエはまっすぐ進みながら弾を撃ってくる
+                transform.Translate(new Vector2(Mathf.Cos(nowAngle * Mathf.Deg2Rad), Mathf.Sin(nowAngle * Mathf.Deg2Rad)) * fallSpeed * Time.deltaTime, Space.World);
+                break;
+            case EnemyType.G:
+                // ゴキブリはランダムに向きを変えて直進　を繰り返す　★
+            case EnemyType.Mosquito:
+                // 蚊は自機に近づいてくる
+                Vector2 posDiff = player.transform.position - this.transform.position;
+                float targetAngle = Mathf.Atan2(posDiff.y, posDiff.x) * Mathf.Rad2Deg;
+                // 目標との角度差分(Deg)
+                float angleDiff = Mathf.DeltaAngle(nowAngle , targetAngle);
+
+                // now->target が一定範囲内(5度以内)だったら回転しない
+                if (5.0f > Mathf.Abs(angleDiff))
+                {
+                }
+                // now->target がプラスだったら左回り(プラス回転)
+                else if (0.0f < angleDiff)
+                {
+                    transform.Rotate(0.0f, 0.0f, rotateSpeed * Time.deltaTime);
+                }
+                // now->target がマイナスだったら右回り(マイナス回転)
+                else
+                {
+                    transform.Rotate(0.0f, 0.0f, -rotateSpeed * Time.deltaTime);
+                }
+
+                nowAngle = 90.0f + transform.rotation.eulerAngles.z;
+                Vector2 dist = new Vector2(Mathf.Cos(nowAngle * Mathf.Deg2Rad), Mathf.Sin(nowAngle * Mathf.Deg2Rad));
+                transform.Translate(dist * fallSpeed * Time.deltaTime, Space.World);
+                break;
+            case EnemyType.G_eggs:
+                // 特に何もしない(背景に合わせてスクロールのみ、今はまだ…)
+                transform.Translate(new Vector2(Mathf.Cos(nowAngle * Mathf.Deg2Rad), Mathf.Sin(nowAngle * Mathf.Deg2Rad)) * fallSpeed * Time.deltaTime, Space.World);
+                break;
+            default:
+                break;
+        }
 
     }
 
+    /***** Enemy個別処理 ****************************************************/
     // ダメージ
     public void OnDamage(int bulletAtk)
     {

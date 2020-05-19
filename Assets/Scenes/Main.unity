@@ -3111,7 +3111,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c67778f559488a40947df5ba837b8d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameArea: {fileID: 1465424218}
+  gameArea: {fileID: 1465424221}
 --- !u!4 &1213693650
 Transform:
   m_ObjectHideFlags: 0
@@ -3900,6 +3900,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1465424219}
   - component: {fileID: 1465424220}
+  - component: {fileID: 1465424221}
   m_Layer: 0
   m_Name: GameArea(mask)
   m_TagString: Untagged
@@ -3969,6 +3970,18 @@ SpriteMask:
   m_BackSortingOrder: 0
   m_IsCustomRangeActive: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1465424221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1465424218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f62674bbdc8341488f6b7df77b41cef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1479682191
 GameObject:
   m_ObjectHideFlags: 0

@@ -48,7 +48,7 @@ public class EnemyGenerator : MonoBehaviour
     };
 
     // 生成エリア指定用
-    public GameObject gameArea;
+    public GameArea gameArea;
     Vector2 minPos;
     Vector2 maxPos;
     bool getArea = false;
@@ -94,8 +94,8 @@ public class EnemyGenerator : MonoBehaviour
         // とりあえず決め打ちの範囲でランダム生成
         GameObject enemy = Instantiate(
             GetEnemyPrefab((EnemyType)Random.Range(0, (int)EnemyType.EnemyType_Num)),   // Random.Range(0, 10) can return a value between 0 and 9
-            ConvertGenPos(new Vector3(Random.value, Random.Range(1.0f, 1.1f))), 
-            Quaternion.identity
+            gameArea.GetPosFromRate(new Vector3(Random.value, Random.Range(1.0f, 1.1f))),
+            Quaternion.Euler(0.0f, 0.0f, 180.0f)
         );
 
         // 次のEnemy生成
@@ -122,34 +122,4 @@ public class EnemyGenerator : MonoBehaviour
         return enemyPrefabs[(int)type];
     }
 
-
-    // 生成位置を座標変換
-    Vector3 ConvertGenPos(Vector3 genPosRate)
-    {
-        if (!getArea)
-        {
-            // 生成対象となるエリアの座標を取得(マスク用Sprite Maskの各種設定値から計算…)
-            float ppu = gameArea.GetComponent<SpriteMask>().sprite.pixelsPerUnit;
-            Rect rect = gameArea.GetComponent<SpriteMask>().sprite.rect;
-            Vector2 position = gameArea.transform.position;
-            Vector2 scale = gameArea.transform.localScale;
-
-            // 元画像のPixel per unitから表示上サイズを求めてScale加味し、Positionでずらす
-            minPos.x = ((rect.width / ppu) * scale.x * (-0.5f)) + position.x;
-            minPos.y = ((rect.height / ppu) * scale.y * (-0.5f)) + position.y;
-            maxPos.x = ((rect.width / ppu) * scale.x * (0.5f)) + position.x;
-            maxPos.y = ((rect.height / ppu) * scale.y * (0.5f)) + position.y;
-
-            Debug.Log("Get Generate Enemy Area!! min:" + minPos + ", max:" + maxPos);
-            getArea = true;
-        }
-
-        Vector3 retPos;
-        retPos.x = (maxPos.x - minPos.x) * genPosRate.x + minPos.x;
-        retPos.y = (maxPos.y - minPos.y) * genPosRate.y + minPos.y;
-        retPos.z = 0.0f;
-
-        // Debug.Log("ret:" + retPos);
-        return retPos;
-    }
 }
