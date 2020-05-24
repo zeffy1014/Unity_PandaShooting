@@ -97,6 +97,7 @@ public class EnemyGenerator : MonoBehaviour
             gameArea.GetPosFromRate(new Vector3(Random.value, Random.Range(1.0f, 1.1f))),
             Quaternion.Euler(0.0f, 0.0f, 180.0f)
         );
+        enemy.GetComponent<EnemyController>().SetGameArea(gameArea.GetGameAreaRect());
 
         // 次のEnemy生成
         Invoke("GenEnemy", 0.5f + 1.0f * Random.value);

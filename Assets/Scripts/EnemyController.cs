@@ -16,14 +16,14 @@ public enum EnemyType
 
 public class EnemyController : MonoBehaviour
 {
-    // 共通で必要に応じて参照する自機
+    // 共通で必要に応じて参照するもの
     static GameObject player = null;
 
     public EnemyType enemyType;
 
     // 移動速度
-    public float fallSpeedBase;
-    float fallSpeed;
+    public float moveSpeedBase;
+    float moveSpeed;
 
     // 旋回速度
     public float rotateSpeedBase;
@@ -32,6 +32,21 @@ public class EnemyController : MonoBehaviour
     // HP
     public int hpBase;
     int hp;
+
+    // 移動できる画面範囲
+    Rect gameArea;
+
+    // G専用 壁際から回転する際の変数
+    bool searchTarget = false;
+    float targetAngle;
+    struct nearWall
+    {
+        public bool N;
+        public bool E;
+        public bool W;
+        public bool S;
+    }
+    nearWall nearWallCheck;
 
     //public Sprite enemySprite;
     //SpriteRenderer mainSpriteRenderer;
@@ -58,60 +73,76 @@ public class EnemyController : MonoBehaviour
         if (null == player) player = GameObject.FindWithTag("Player");
 
         // とりあえず背景スクロールスピードを加算する(移動ゼロの敵は背景と一緒にスクロールする)
-        fallSpeed = fallSpeedBase + BGController.scrollSpeed;
+        moveSpeed = moveSpeedBase + BGController.scrollSpeed;
         // もともと速度があるものはランダムで上乗せ(1.0-1.5倍)
-        fallSpeed += (fallSpeed - BGController.scrollSpeed) * Random.Range(0.0f, 0.5f);
+        moveSpeed += (moveSpeed - BGController.scrollSpeed) * Random.Range(0.0f, 0.5f);
 
         // 旋回速度は特にいじらない
         rotateSpeed = rotateSpeedBase;
 
         hp = hpBase;
 
+        if (EnemyType.G == this.enemyType)
+        {
+            this.nearWallCheck.N = false;
+            this.nearWallCheck.E = false;
+            this.nearWallCheck.W = false;
+            this.nearWallCheck.S = false;
+        }
     }
 
     void Update()
     {
-        // 移動計算用の角度 画像の関係で90度回った状態なので注意
-        float nowAngle = 90.0f + transform.rotation.eulerAngles.z;
-
         // 種別ごとにやることが違う とりあえず書いていく
         switch (this.enemyType)
         {
             case EnemyType.Fly:
                 // ハエはまっすぐ進みながら弾を撃ってくる
-                transform.Translate(new Vector2(Mathf.Cos(nowAngle * Mathf.Deg2Rad), Mathf.Sin(nowAngle * Mathf.Deg2Rad)) * fallSpeed * Time.deltaTime, Space.World);
+                GoStraight(this.moveSpeed);
                 break;
             case EnemyType.G:
-                // ゴキブリはランダムに向きを変えて直進　を繰り返す　★
-            case EnemyType.Mosquito:
-                // 蚊は自機に近づいてくる
-                Vector2 posDiff = player.transform.position - this.transform.position;
-                float targetAngle = Mathf.Atan2(posDiff.y, posDiff.x) * Mathf.Rad2Deg;
-                // 目標との角度差分(Deg)
-                float angleDiff = Mathf.DeltaAngle(nowAngle , targetAngle);
+                // ゴキブリはランダムに向きを変えて直進　を繰り返す
+                // 壁接近情報更新しつつ接近検出したらtrue
+                if (false == searchTarget && true == IsApproachingWall(10.0f))
+                {
+                    searchTarget = true;
+                    // 次に向かう角度(壁に対して離れる方向)を決める
+                    float freeAngleMax = default;
+                    float freeAngleMin = default;
+                    GetFreeAngle(ref freeAngleMax, ref freeAngleMin, 5.0f);
 
-                // now->target が一定範囲内(5度以内)だったら回転しない
-                if (5.0f > Mathf.Abs(angleDiff))
-                {
+                    // 既に壁から離れる方向を向いていたらそのまま(入場時を考慮)
+                    if (freeAngleMax >= GetNowAngle() && freeAngleMin <= GetNowAngle())
+                    {
+                        searchTarget = false;
+                    }
+                    else
+                    {
+                        // 次に向かう角度(壁に対して離れる方向)を決める
+                        targetAngle = Random.Range(freeAngleMin, freeAngleMax);
+                    }
                 }
-                // now->target がプラスだったら左回り(プラス回転)
-                else if (0.0f < angleDiff)
+                else if (true == searchTarget)
                 {
-                    transform.Rotate(0.0f, 0.0f, rotateSpeed * Time.deltaTime);
+                    // 目標角度に向かって回転
+                    bool needRotate = Rotate2TargetAngle(this.targetAngle, this.rotateSpeed);
+                    // もう回転しなくてよければ状態変更
+                    if (false == needRotate) searchTarget = false;
                 }
-                // now->target がマイナスだったら右回り(マイナス回転)
                 else
                 {
-                    transform.Rotate(0.0f, 0.0f, -rotateSpeed * Time.deltaTime);
+                    // 向いている方向に進む
+                    GoStraight(this.moveSpeed);
                 }
-
-                nowAngle = 90.0f + transform.rotation.eulerAngles.z;
-                Vector2 dist = new Vector2(Mathf.Cos(nowAngle * Mathf.Deg2Rad), Mathf.Sin(nowAngle * Mathf.Deg2Rad));
-                transform.Translate(dist * fallSpeed * Time.deltaTime, Space.World);
+                break;
+            case EnemyType.Mosquito:
+                // 蚊は自機に近づいてくる
+                Rotate2Player(this.rotateSpeed);
+                GoStraight(this.moveSpeed);
                 break;
             case EnemyType.G_eggs:
                 // 特に何もしない(背景に合わせてスクロールのみ、今はまだ…)
-                transform.Translate(new Vector2(Mathf.Cos(nowAngle * Mathf.Deg2Rad), Mathf.Sin(nowAngle * Mathf.Deg2Rad)) * fallSpeed * Time.deltaTime, Space.World);
+                GoStraight(this.moveSpeed);
                 break;
             default:
                 break;
@@ -120,6 +151,12 @@ public class EnemyController : MonoBehaviour
     }
 
     /***** Enemy個別処理 ****************************************************/
+    // 画面範囲を渡す(生成時にセット)
+    public void SetGameArea(Rect area)
+    {
+        gameArea = area;
+    }
+
     // ダメージ
     public void OnDamage(int bulletAtk)
     {
@@ -162,4 +199,197 @@ public class EnemyController : MonoBehaviour
         this.gameObject.GetComponent<SpriteRenderer>().material = normalMaterial;
     }
 
+    // ある角度に向かって回転する(回転不要だったらfalseを返す)
+    bool Rotate2TargetAngle(float targetAngle, float rotateSpeed)
+    {
+        bool ret = true;
+
+        // 目標との角度差分(Deg)
+        float angleDiff = Mathf.DeltaAngle(GetNowAngle(), targetAngle);
+
+        // now->target が一定範囲内(5度以内)だったら回転しない
+        if (5.0f > Mathf.Abs(angleDiff))
+        {
+            ret = false;
+        }
+        // now->target がプラスだったら左回り(プラス回転)
+        else if (0.0f < angleDiff)
+        {
+            transform.Rotate(0.0f, 0.0f, rotateSpeed * Time.deltaTime);
+        }
+        // now->target がマイナスだったら右回り(マイナス回転)
+        else
+        {
+            transform.Rotate(0.0f, 0.0f, -rotateSpeed * Time.deltaTime);
+        }
+
+        return ret;
+    }
+
+    // 自機に向かって回転する
+    void Rotate2Player(float rotateSpeed)
+    {
+        Vector2 posDiff = player.transform.position - this.transform.position;
+        float targetAngle = Mathf.Atan2(posDiff.y, posDiff.x) * Mathf.Rad2Deg;
+        Rotate2TargetAngle(targetAngle, rotateSpeed);
+
+        return;
+    }
+
+    // まっすぐ進む
+    void GoStraight(float speed)
+    {
+        transform.Translate(new Vector2(Mathf.Cos(GetNowAngle() * Mathf.Deg2Rad), Mathf.Sin(GetNowAngle() * Mathf.Deg2Rad)) * speed * Time.deltaTime, Space.World);
+        return;
+    }
+
+    // 現在の角度取得(頭が向いている方向)
+    float GetNowAngle()
+    {
+        return 90.0f + transform.rotation.eulerAngles.z;
+    }
+
+    // 現在地が壁に接近したか確認・接近情報更新
+    // 引数: 壁を0とした場合に画面幅・高さの何%の範囲まで接近していたら検出するか
+    bool IsApproachingWall(float checkRate)
+    {
+        bool ret = false;
+
+        // 引数範囲チェック
+        if (0 > checkRate || 100 < checkRate)
+        {
+            // 不正入力
+            return ret;
+        }
+
+        checkRate /= 100;
+        float posX = this.transform.position.x;
+        float posY = this.transform.position.y;
+
+        // North接近確認
+        if (gameArea.yMax > posY && (gameArea.yMax - gameArea.height * checkRate) <= posY)
+        {
+            if(!this.nearWallCheck.N)
+            {
+                this.nearWallCheck.N = true;
+                ret = true;
+            }
+        }
+        else if((gameArea.yMax - gameArea.height * checkRate) > posY) this.nearWallCheck.N = false;
+
+        // East接近確認
+        if (gameArea.xMax > posX && (gameArea.xMax - gameArea.width * checkRate) <= posX)
+        {
+            if (!this.nearWallCheck.E)
+            {
+                this.nearWallCheck.E = true;
+                ret = true;
+            }
+        }
+        else if ((gameArea.xMax - gameArea.width * checkRate) > posX) this.nearWallCheck.E = false;
+
+        // West接近確認
+        if (gameArea.xMin < posX && (gameArea.xMin + gameArea.width * checkRate) >= posX)
+        {
+            if (!this.nearWallCheck.W)
+            {
+                this.nearWallCheck.W = true;
+                ret = true;
+            }
+        }
+        else if ((gameArea.xMin + gameArea.width * checkRate) < posX) this.nearWallCheck.W = false;
+
+        // South接近確認
+        if (gameArea.yMin < posY && (gameArea.yMin + gameArea.height * checkRate) >= posY)
+        {
+            if (!this.nearWallCheck.S)
+            {
+                this.nearWallCheck.S = true;
+                ret = true;
+            }
+        }
+        else if ((gameArea.yMin + gameArea.height * checkRate) < posY) this.nearWallCheck.S = false;
+
+        return ret;
+    }
+
+    // 壁から離れる角度を取得
+    // 返却用の最大最小角度と、遊びを持たせるために狭める角度(play)
+    void GetFreeAngle(ref float angleMax, ref float angleMin, float play)
+    {
+        angleMax = 360.0f;
+        angleMin = 0.0f;
+
+        // どの壁に近い状態かで第1～第4象限で進める方向を決める
+        bool quadrant1 = true; //0-90deg
+        bool quadrant2 = true; //90-180deg
+        bool quadrant3 = true; //180-270deg
+        bool quadrant4 = true; //270-360deg
+
+        if (this.nearWallCheck.N) quadrant1 = quadrant2 = false;
+        if (this.nearWallCheck.E) quadrant1 = quadrant4 = false;
+        if (this.nearWallCheck.W) quadrant2 = quadrant3 = false;
+        if (this.nearWallCheck.S) quadrant3 = quadrant4 = false;
+
+        // パターンとしては8種類
+        if (true == quadrant1)
+        {
+            if (true == quadrant2)
+            {
+                angleMin = 0.0f;
+                angleMax = 180.0f;
+            }
+            else if (true == quadrant4)
+            {
+                angleMin = -90.0f;
+                angleMax = 90.0f;
+            }
+            else
+            {
+                angleMin = 0.0f;
+                angleMax = 90.0f;
+            }
+        }
+        else if (true == quadrant2)
+        {
+            if (true == quadrant3)
+            {
+                angleMin = 90.0f;
+                angleMax = 270.0f;
+            }
+            else
+            {
+                angleMin = 90.0f;
+                angleMax = 180.0f;
+            }
+        }
+        else if (true == quadrant3)
+        {
+            if (true == quadrant4)
+            {
+                angleMin = 180.0f;
+                angleMax = 360.0f;
+            }
+            else
+            {
+                angleMin = 180.0f;
+                angleMax = 270.0f;
+            }
+        }
+        else if (true == quadrant4)
+        {
+            angleMin = 270.0f;
+            angleMax = 360.0f;
+        }
+        else
+        {
+            // 壁から離れるのは上記8パターン以外はない　あとは全方向フリーで
+        }
+
+        // 遊びを考慮して範囲を少しせばめる
+        angleMin += play;
+        angleMax -= play;
+
+        return;
+    }
 }

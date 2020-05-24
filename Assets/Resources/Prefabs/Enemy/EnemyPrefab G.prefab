@@ -43,6 +43,16 @@ PrefabInstance:
       propertyPath: enemyType
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 8866115673948622513, guid: 8a49af0751cca084aa3918d9f2e57a7a,
+        type: 3}
+      propertyPath: moveSpeedBase
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8866115673948622513, guid: 8a49af0751cca084aa3918d9f2e57a7a,
+        type: 3}
+      propertyPath: rotateSpeedBase
+      value: 150
+      objectReference: {fileID: 0}
     - target: {fileID: 8866115673948622514, guid: 8a49af0751cca084aa3918d9f2e57a7a,
         type: 3}
       propertyPath: m_Name

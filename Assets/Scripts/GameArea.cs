@@ -58,4 +58,10 @@ public class GameArea : MonoBehaviour
         return retPos;
     }
 
+    // 範囲情報を丸ごと取得
+    public Rect GetGameAreaRect()
+    {
+        GetArea();
+        return gameArea;
+    }
 }
