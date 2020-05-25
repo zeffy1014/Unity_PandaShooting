@@ -1,5 +1,26 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &7073217353196560036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4960201588022217230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28453ecae8dbfdb4b9c2713982c7268c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyType: 1
+  moveSpeedBase: 2
+  rotateSpeedBase: 100
+  hpBase: 10
+  damageMaterial: {fileID: 2100000, guid: 3c710dedb4f45614fbf8073b3c965640, type: 2}
+  normalMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  defeatEffect: {fileID: 7939302427467974438, guid: 09ea7ec0501cb8b4aa1b040e6d791668,
+    type: 3}
+  defeatSE: {fileID: 8300000, guid: a610a41196f17484abdc7e520d21a868, type: 3}
 --- !u!1001 &4601808192649790652
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -108,5 +129,12 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8866115673948622513, guid: 8a49af0751cca084aa3918d9f2e57a7a, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 8a49af0751cca084aa3918d9f2e57a7a, type: 3}
+--- !u!1 &4960201588022217230 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8866115673948622514, guid: 8a49af0751cca084aa3918d9f2e57a7a,
+    type: 3}
+  m_PrefabInstance: {fileID: 4601808192649790652}
+  m_PrefabAsset: {fileID: 0}
