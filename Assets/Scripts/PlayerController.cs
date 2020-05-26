@@ -215,7 +215,7 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
             // マウス左クリックで弾を出す
             if (Input.GetMouseButton(0))
             {
-                ShotBullet(BulletKind.Player_Mikan, transform.eulerAngles.z);
+                ShotBullet(BulletKind.Player_Mikan, GetNowAngle());
             }
             // マウス右クリック押し→離しで弾を出す
             if (Input.GetMouseButtonDown(1))
@@ -234,11 +234,11 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
                     if (diffX == 0.0f && diffY == 0.0f)
                     {
                         // 自機の向きに発射
-                        angle = transform.eulerAngles.z;
+                        angle = GetNowAngle();
                     }
                     else
                     {
-                        angle = Mathf.Atan2(diffX, diffY) * Mathf.Rad2Deg;
+                        angle = Mathf.Atan2(diffY, diffX) * Mathf.Rad2Deg;
                     }
 
                     //Debug.Log("Right Click End: " + endRightClickPos);
@@ -315,6 +315,11 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
         posInfo.transform.position = dispPos;
     }
 
+    public void ShotBullet(BulletKind kind)
+    {
+        ShotBullet(kind, GetNowAngle());
+    }
+
     public void ShotBullet(BulletKind kind, float angle)
     {
         // 発射位置と向き
@@ -362,5 +367,11 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
         Life = 0;
         lifePanel.UpdateLife(Life);
         gameObject.SetActive(false);
+    }
+
+    // 現在の角度取得(頭が向いている方向)
+    protected float GetNowAngle()
+    {
+        return 90.0f + transform.eulerAngles.z;
     }
 }

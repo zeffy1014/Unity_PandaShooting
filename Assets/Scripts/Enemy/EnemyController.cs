@@ -171,7 +171,7 @@ public class EnemyController : MonoBehaviour
     // 現在の角度取得(頭が向いている方向)
     protected float GetNowAngle()
     {
-        return 90.0f + transform.rotation.eulerAngles.z;
+        return 90.0f + transform.eulerAngles.z;
     }
 
   

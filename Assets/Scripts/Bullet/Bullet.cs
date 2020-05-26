@@ -28,8 +28,8 @@ public class Bullet : MonoBehaviour
     public void Shot(float deg)
     {
         movAngle = deg;
-        float speedX = movSpeed * Mathf.Sin(movAngle * Mathf.Deg2Rad);
-        float speedY = movSpeed * Mathf.Cos(movAngle * Mathf.Deg2Rad);
+        float speedX = movSpeed * Mathf.Cos(movAngle * Mathf.Deg2Rad);
+        float speedY = movSpeed * Mathf.Sin(movAngle * Mathf.Deg2Rad);
         this.GetComponent<Rigidbody2D>().AddForce(new Vector2(speedX, speedY) * movSpeed);
 
         this.GetComponent<Rigidbody2D>().AddTorque(rotateSpeed);

@@ -87,7 +87,7 @@ public class ButtonOperation : MonoBehaviour
         {
             case ButtonKind.Action_Shot:
                 // 弾を撃つ
-                if (player) player.ShotBullet(BulletKind.Player_Mikan, player.transform.eulerAngles.z);
+                if (player) player.ShotBullet(BulletKind.Player_Mikan);
                 break;
             default:
                 break;
@@ -111,7 +111,7 @@ public class ButtonOperation : MonoBehaviour
                 {
                     float diffX = data.position.x - startDragPoint.x;
                     float diffY = data.position.y - startDragPoint.y;
-                    float shotAngle = Mathf.Atan2(diffX, diffY) * Mathf.Rad2Deg;
+                    float shotAngle = Mathf.Atan2(diffY, diffX) * Mathf.Rad2Deg;
                     Debug.Log("shotAngle:" + shotAngle);
 
                     if (player) player.ShotBullet(BulletKind.Player_Sakana, shotAngle);
