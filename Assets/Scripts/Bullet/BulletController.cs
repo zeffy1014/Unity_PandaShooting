@@ -23,7 +23,7 @@ public class BulletController : MonoBehaviour
         "Prefabs/Bullet/BulletPrefab Player_Shot0a",
         "Prefabs/Bullet/BulletPrefab Player_Shot1a",
         "Prefabs/Bullet/BulletPrefab", // ダミー登録
-        "Prefabs/Bullet/BulletPrefab", // ダミー登録
+        "Prefabs/Bullet/BulletPrefab Enemy_Shot0",
         "Prefabs/Bullet/BulletPrefab", // ダミー登録
     };
 
@@ -57,7 +57,7 @@ public class BulletController : MonoBehaviour
     }
 
     // 弾を発射
-    static public void ShotBullet(Vector3 pos, Vector3 rot, BulletKind kind, float angle)
+    static public void ShotBullet(Vector3 pos, Vector3 rot, BulletKind kind, float angle, float speed = -1.0f)
     {
         BulletGo = false;
 
@@ -67,7 +67,16 @@ public class BulletController : MonoBehaviour
         // 弾生成
         if (null == bulletPrefab) LoadResource();
         GameObject bullet = Instantiate<GameObject>(bulletPrefab[(int)kind], pos, Quaternion.Euler(rot));
-        bullet.GetComponent<Bullet>().Shot(angle);
+        if (0 > speed)
+        {
+            // デフォルト設定の速度で発射
+            bullet.GetComponent<Bullet>().Shot(angle);
+        }
+        else
+        {
+            // 指定速度で発射
+            bullet.GetComponent<Bullet>().Shot(angle, speed);
+        }
 
         // 音も出す
         GetObject().GetComponent<AudioSource>().PlayOneShot(shotSE);

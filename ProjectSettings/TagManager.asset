@@ -9,6 +9,7 @@ TagManager:
   - Bullet
   - House
   - Wall
+  - Bullet_Enemy
   layers:
   - Default
   - TransparentFX

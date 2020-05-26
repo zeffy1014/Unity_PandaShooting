@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyType: 0
-  moveSpeedBase: 3
+  moveSpeedBase: 2
   rotateSpeedBase: 0
   hpBase: 10
   damageMaterial: {fileID: 2100000, guid: 3c710dedb4f45614fbf8073b3c965640, type: 2}
@@ -21,6 +21,7 @@ MonoBehaviour:
   defeatEffect: {fileID: 7939302427467974438, guid: 09ea7ec0501cb8b4aa1b040e6d791668,
     type: 3}
   defeatSE: {fileID: 8300000, guid: a610a41196f17484abdc7e520d21a868, type: 3}
+  shotInterval: 1
 --- !u!1001 &8643926742968069466
 PrefabInstance:
   m_ObjectHideFlags: 0

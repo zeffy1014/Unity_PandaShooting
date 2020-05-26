@@ -23,17 +23,22 @@ public class Bullet : MonoBehaviour
 
     GameObject player;
 
-
-    // 進行方向(角度)を設定して放つ
-    public void Shot(float deg)
+    // 進行方向(角度)と速さを設定して放つ
+    public void Shot(float deg, float speed)
     {
         movAngle = deg;
+        movSpeed = speed;
         float speedX = movSpeed * Mathf.Cos(movAngle * Mathf.Deg2Rad);
         float speedY = movSpeed * Mathf.Sin(movAngle * Mathf.Deg2Rad);
         this.GetComponent<Rigidbody2D>().AddForce(new Vector2(speedX, speedY) * movSpeed);
 
         this.GetComponent<Rigidbody2D>().AddTorque(rotateSpeed);
+    }
 
+    // 進行方向(角度)を設定して放つ
+    public void Shot(float deg)
+    {
+        Shot(deg, this.movSpeed);
     }
 
     // Start is called before the first frame update

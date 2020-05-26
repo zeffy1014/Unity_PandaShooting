@@ -151,8 +151,8 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
     /***** Collider2Dイベント処理 ****************************************************/
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // 敵と接触
-        if ("Enemy" == other.gameObject.tag)
+        // 敵または敵弾と接触
+        if ("Enemy" == other.gameObject.tag || "Bullet_Enemy" == other.gameObject.tag)
         {
             // エフェクトつける
             Instantiate(damageEffect, transform.position, Quaternion.identity);
@@ -172,6 +172,9 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
             {
                 EventHandlerExtention.SendEvent(new GameOverEventData());
             }
+
+            // TODO:一定時間無敵にする
+
         }
         // 魚を回収
         if ("Bullet" == other.gameObject.tag && BulletKind.Player_Sakana == other.GetComponent<Bullet>().bulletKind)

@@ -174,5 +174,26 @@ public class EnemyController : MonoBehaviour
         return 90.0f + transform.eulerAngles.z;
     }
 
+    // 指定された角度で弾を撃つ
+    protected void ShotBullet(BulletKind kind, float deg, float speed)
+    {
+        // 発射位置と向き
+        Vector3 genPos = this.transform.position;
+        Vector3 genRot = this.transform.eulerAngles;
+
+        BulletController.ShotBullet(genPos, genRot, kind, deg, speed);
+    }
+
+    // 自機に向かって弾を撃つ
+    protected void ShotBullet2Player(float speed = -1.0f)
+    {
+        // 自機に対する角度を算出
+        Vector2 posDiff = player.transform.position - this.transform.position;
+        float targetAngle = Mathf.Atan2(posDiff.y, posDiff.x) * Mathf.Rad2Deg;
+
+        ShotBullet(BulletKind.Enemy_Point, targetAngle, speed);
+
+        return;
+    }
   
 }

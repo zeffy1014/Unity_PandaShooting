@@ -15,8 +15,16 @@ public class EC_Fly : EnemyController
 
     void Update()
     {
-        // TODO:ハエはまっすぐ進みながら弾を撃ってくる
+        // ハエはまっすぐ進みながら弾を撃ってくる
         GoStraight(this.moveSpeed);
+
+        // 一定時間経過のたびに発射
+        shotElaspedTime += Time.deltaTime;
+        if (shotInterval < shotElaspedTime)
+        {
+            ShotBullet2Player();
+            shotElaspedTime = 0.0f;
+        }
 
         return;
     }
