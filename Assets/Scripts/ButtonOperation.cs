@@ -52,7 +52,7 @@ public class ButtonOperation : MonoBehaviour
             if (ButtonKind.Action_Shot == buttonKind)
             {
                 // 弾を撃つ
-                if (player) player.ShotBullet(BulletKind.Player_Mikan, player.transform.eulerAngles.z);
+                if (player) player.ShotBullet(BulletKind.Player_Mikan);
             }
         }
         else
