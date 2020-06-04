@@ -23,7 +23,7 @@ public class EC_G_eggs : EnemyController
         base.Start();
     }
 
-    void Update()
+    override protected void UpdateAction()
     {
         elaspedTime += Time.deltaTime;
 

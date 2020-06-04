@@ -27,7 +27,7 @@ public class EC_G : EnemyController
         base.Start();
     }
 
-    void Update()
+    override protected void UpdateAction()
     {
         // ゴキブリはランダムに向きを変えて直進　を繰り返す
         // 壁接近情報更新しつつ接近検出したらtrue
@@ -55,7 +55,7 @@ public class EC_G : EnemyController
             // 目標角度に向かって回転
             bool needRotate = Rotate2TargetAngle(this.targetAngle, this.rotateSpeed);
             // もう回転しなくてよければ状態変更
-            if (false == needRotate) searchTarget = false;
+            if (true == needRotate) searchTarget = false;
         }
         else
         {

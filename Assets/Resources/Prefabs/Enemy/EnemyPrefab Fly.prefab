@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyType: 0
   moveSpeedBase: 2
-  rotateSpeedBase: 0
+  rotateSpeedBase: 150
   hpBase: 10
   damageMaterial: {fileID: 2100000, guid: 3c710dedb4f45614fbf8073b3c965640, type: 2}
   normalMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
@@ -29,6 +29,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3637039732630382399, guid: 8a49af0751cca084aa3918d9f2e57a7a,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 0.92
+      objectReference: {fileID: 0}
+    - target: {fileID: 8603186280688702763, guid: 8a49af0751cca084aa3918d9f2e57a7a,
+        type: 3}
+      propertyPath: m_Radius
+      value: 0.35
+      objectReference: {fileID: 0}
     - target: {fileID: 8866115673948622512, guid: 8a49af0751cca084aa3918d9f2e57a7a,
         type: 3}
       propertyPath: m_Sprite

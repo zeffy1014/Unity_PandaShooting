@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyType: 1
   moveSpeedBase: 2
-  rotateSpeedBase: 100
+  rotateSpeedBase: 150
   hpBase: 10
   damageMaterial: {fileID: 2100000, guid: 3c710dedb4f45614fbf8073b3c965640, type: 2}
   normalMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}

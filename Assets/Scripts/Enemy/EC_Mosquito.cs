@@ -9,7 +9,7 @@ public class EC_Mosquito : EnemyController
         base.Start();
     }
 
-    void Update()
+    override protected void UpdateAction()
     {
         // 蚊は自機に近づいてくる
         Rotate2Player(this.rotateSpeed);

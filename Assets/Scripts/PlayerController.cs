@@ -8,6 +8,9 @@ using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour, IGameEventReceiver
 {
+    // 固定値
+    const float ANGLE_GAP = 90.0f;
+
     // 弾を撃つ際の設定
     float shotCycle = 0.2f; // 弾の連射間隔
     float waitShotTime = 0.0f; // 現在の連射待ち時間
@@ -375,6 +378,6 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
     // 現在の角度取得(頭が向いている方向)
     protected float GetNowAngle()
     {
-        return 90.0f + transform.eulerAngles.z;
+        return ANGLE_GAP + transform.eulerAngles.z;
     }
 }

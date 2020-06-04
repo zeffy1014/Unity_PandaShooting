@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 8866115673948622519}
   - component: {fileID: 8866115673948622512}
   - component: {fileID: 8866115673948622513}
-  - component: {fileID: 8603186280688702763}
   - component: {fileID: 1700938438480683869}
+  - component: {fileID: 3637039732630382399}
   m_Layer: 0
   m_Name: EnemyPrefab
   m_TagString: Enemy
@@ -96,7 +96,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyType: 4
-  fallSpeedBase: 3
+  moveSpeedBase: 0
   rotateSpeedBase: 100
   hpBase: 10
   damageMaterial: {fileID: 2100000, guid: 3c710dedb4f45614fbf8073b3c965640, type: 2}
@@ -104,22 +104,6 @@ MonoBehaviour:
   defeatEffect: {fileID: 7939302427467974438, guid: 09ea7ec0501cb8b4aa1b040e6d791668,
     type: 3}
   defeatSE: {fileID: 8300000, guid: a610a41196f17484abdc7e520d21a868, type: 3}
---- !u!58 &8603186280688702763
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8866115673948622514}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 0.25
 --- !u!50 &1700938438480683869
 Rigidbody2D:
   serializedVersion: 4
@@ -141,3 +125,19 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!70 &3637039732630382399
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8866115673948622514}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_Size: {x: 0.5, y: 1}
+  m_Direction: 0
