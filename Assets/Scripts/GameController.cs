@@ -1,14 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UniRx;
 
 public class GameController : MonoBehaviour, IGameEventReceiver
 {
     const float DisplayGoSec = 1.5f;
     const float CountDownSpan = 0.1f;
-
-    GameState state = GameState.None;
 
     public int baseScore;
     public int bonusScore;
@@ -22,7 +22,6 @@ public class GameController : MonoBehaviour, IGameEventReceiver
     public Button slideButton;
     public Button retryButton;
     public Button titleButton;
-    public Toggle debugMode;
     public Text posInfo;
 
     int score = 0;
@@ -48,7 +47,7 @@ public class GameController : MonoBehaviour, IGameEventReceiver
     public void OnGameOver()
     {
         // Debug Mode中でなければゲームオーバー
-        if (!debugMode.isOn) if (GameState.Play == state) player.ForceGameOver();
+        //if (!debugMode.isOn) if (GameState.Play == state) player.ForceGameOver();
     }
 
     // 敵を撃破
@@ -67,8 +66,12 @@ public class GameController : MonoBehaviour, IGameEventReceiver
     /***** MonoBehaviourイベント処理 ****************************************************/
     void Start()
     {
+        // 状態監視(初期値は無視する) AddToで破棄も考慮
+        GameStateProperty.valueReactiveProperty.DistinctUntilChanged().Skip(1).Subscribe(x => ChangeState(x)).AddTo(this);
+
         // 開始時はReady状態
-        EntryReady();
+        //EntryReady();
+        GameStateProperty.SetState(GameState.Ready);
 
         audioSource = GetComponent<AudioSource>();
 
@@ -83,14 +86,8 @@ public class GameController : MonoBehaviour, IGameEventReceiver
         // カーソルを出さないようにする
         Cursor.lockState = CursorLockMode.Confined;
 
-        // Debug ModeのToggleはEditor使用時のみ表示する
-        //bool validDebug = Application.isEditor;
-        bool validDebug = true; // TODO:しばらくは常にON
-        debugMode.gameObject.SetActive(validDebug);
-        debugMode.GetComponent<Toggle>().isOn = validDebug;
-
-        // Debug用位置情報もDebug Modeの場合のみ表示
-        posInfo.gameObject.SetActive(validDebug);
+        // Debug用位置情報はデバッグモードの場合のみ表示
+        posInfo.gameObject.SetActive(SettingInfo.DebugMode);
 
         // 操作ボタンはモバイル環境だけ有効にする
         // TODO:しばらくは常にON
@@ -114,7 +111,7 @@ public class GameController : MonoBehaviour, IGameEventReceiver
     void LateUpdate()
     {
         // 状態ごとにイベント監視
-        switch (state)
+        switch (GameStateProperty.GetState())
         {
             case GameState.Ready:
                 // ラベルを点滅
@@ -123,11 +120,12 @@ public class GameController : MonoBehaviour, IGameEventReceiver
                 stateLabel.color = color;
 
                 // 何か押したらスタート
-                if (Input.anyKey) EntryPlay();
+                if (Input.anyKey) GameStateProperty.SetState(GameState.Play);
                 break;
             case GameState.Play:
+                // デバッグモード解除時の死亡確認
                 // 死亡したらゲームオーバー(Debug Modeでなければ)
-                if (0 >= player.Life && !debugMode.isOn) EntryGameOver();
+                if (0 >= player.Life && !SettingInfo.DebugMode) GameStateProperty.SetState(GameState.GameOver);
                 break;
             case GameState.GameOver:
                  break;
@@ -139,7 +137,7 @@ public class GameController : MonoBehaviour, IGameEventReceiver
     public void IncreaseScore(int increaseScore)
     {
         // ゲームオーバーでなければ加算
-        if (GameState.GameOver != state)
+        if (GameState.GameOver != GameStateProperty.GetState())
         {
             // スコアとコンボ追加
             // スコア計算式: 敵の種類に応じた得点 + コンボ数*ボーナス点
@@ -181,11 +179,28 @@ public class GameController : MonoBehaviour, IGameEventReceiver
 
 
     /***** 各種状態遷移処理 ****************************************************/
+    // State変化時の各処理入り口
+    public void ChangeState(GameState state)
+    {
+        switch (state)
+        {
+            case GameState.GameOver:
+                EntryGameOver();
+                break;
+            case GameState.Play:
+                EntryPlay();
+                break;
+            case GameState.Ready:
+                EntryReady();
+                break;
+            default:
+                break;
+        }
+
+        return;
+    }
     void EntryReady()
     {
-        state = GameState.Ready;
-        player.State = GameState.Ready;
-
         // ラベルを更新
         scoreLabel.text = "Score : " + 0;
         comboLabel.text = "Combo : " + 0;
@@ -204,8 +219,6 @@ public class GameController : MonoBehaviour, IGameEventReceiver
 
     void EntryPlay()
     {
-        state = GameState.Play;
-        player.State = GameState.Play;
         generator.GameStart();
 
         // 音をならす
@@ -221,9 +234,6 @@ public class GameController : MonoBehaviour, IGameEventReceiver
 
     void EntryGameOver()
     {
-        state = GameState.GameOver;
-        player.State = GameState.GameOver;
-
         // ラベルを更新
         stateLabel.gameObject.SetActive(true);
         stateLabel.text = "そこまで！";

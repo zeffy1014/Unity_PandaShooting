@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UniRx;
 
 // TODO:PlayerとEnemyをFlyerみたいなものにまとめてPlayerの移動などは継承して書きたい
 
@@ -31,7 +32,6 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
     public int defaultLife = 5;
     public int Life { get; set; }
     public bool Playing { get; set; } = false;
-    public GameState State { get; set; } = GameState.None;
 
     public LifePanel lifePanel;
 
@@ -104,6 +104,9 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
         // イベント受信用登録
         EventHandlerExtention.AddListner(this.gameObject, SendEventType.OnShotFish);
         EventHandlerExtention.AddListner(this.gameObject, SendEventType.OnLostFish);
+
+        // 状態監視(初期値は無視する) AddToで破棄も考慮
+        GameStateProperty.valueReactiveProperty.DistinctUntilChanged().Skip(1).Subscribe(x => ChangeState(x)).AddTo(this);
     }
 
     // Update is called once per frame
@@ -170,10 +173,14 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
             // コンボ切れる
             EventHandlerExtention.SendEvent(new BreakComboEventData());
 
-            // ライフ無くなったらGameOver処理してもらう
+            // ライフ無くなったらGameOver状態へ遷移
             if (0 >= Life)
             {
-                EventHandlerExtention.SendEvent(new GameOverEventData());
+                if (false == SettingInfo.DebugMode)
+                {
+                    GameStateProperty.SetState(GameState.GameOver);
+                    EventHandlerExtention.SendEvent(new GameOverEventData());
+                }
             }
 
             // TODO:一定時間無敵にする
@@ -216,7 +223,7 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
         DispPosInfo(Input.mousePosition, mousePosW);
 
         // プレイ中のみの動作
-        if (GameState.Play == State)
+        if (GameState.Play == GameStateProperty.GetState())
         {
             // マウス左クリックで弾を出す
             if (Input.GetMouseButton(0))
@@ -364,7 +371,24 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
         }
     }
 
-    public void ForceGameOver()
+    // State変化時の各処理入り口
+    public void ChangeState(GameState state)
+    {
+        switch (state)
+        {
+            case GameState.GameOver:
+                EntryGameOver();
+                break;
+            case GameState.Play:
+            case GameState.Ready:
+            default:
+                break;
+        }
+
+        return;
+    }
+
+    void EntryGameOver()
     {
         // エフェクトつける
         Instantiate(damageEffect, transform.position, Quaternion.identity);

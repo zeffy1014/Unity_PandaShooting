@@ -425,6 +425,9 @@ public class EnemyController : MonoBehaviour
     // 弾の数と1つ1つの角度(デフォルト:30度だが弾数が多い場合は重ならないように調整が入る)を指定
     protected void ShotMultipleBullet(int bulletNum, float angle = 30.0f, BulletKind kind = BulletKind.Enemy_Point, float speed = -1.0f)
     {
+        // 自機がいないなら撃たない
+        if (null == player) return;
+
         // 自機に対する角度を算出
         Vector2 posDiff = player.transform.position - this.transform.position;
         float targetAngle = Mathf.Atan2(posDiff.y, posDiff.x) * Mathf.Rad2Deg;
