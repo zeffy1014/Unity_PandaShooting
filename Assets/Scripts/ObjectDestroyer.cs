@@ -47,8 +47,7 @@ public class ObjectDestroyer : MonoBehaviour
         // ゲームオーバーのトリガーとなるオブジェクトに触れた場合
         if (isDeadLine)
         {
-            EventHandlerExtention.SendEvent(new GameOverEventData());
-
+            GameStateProperty.SetState(GameState.GameOver);
             Destroy(other.gameObject);
         }
     }

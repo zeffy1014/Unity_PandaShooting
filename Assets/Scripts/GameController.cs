@@ -15,6 +15,8 @@ public class GameController : MonoBehaviour, IGameEventReceiver
 
     public PlayerController player;
     public EnemyGenerator generator;
+    public HouseGauge house;
+
     public Text scoreLabel;
     public Text comboLabel;
     public Text stateLabel;
@@ -68,9 +70,10 @@ public class GameController : MonoBehaviour, IGameEventReceiver
     {
         // 状態監視(初期値は無視する) AddToで破棄も考慮
         GameStateProperty.valueReactiveProperty.DistinctUntilChanged().Skip(1).Subscribe(x => ChangeState(x)).AddTo(this);
+        player.lifeReactiveProperty.DistinctUntilChanged().Skip(1).Subscribe(x => ChangePlayerLife(x)).AddTo(this);
+        house.lifeReactiveProperty.DistinctUntilChanged().Skip(1).Subscribe(x => ChangeHouseLife(x)).AddTo(this);
 
         // 開始時はReady状態
-        //EntryReady();
         GameStateProperty.SetState(GameState.Ready);
 
         audioSource = GetComponent<AudioSource>();
@@ -124,8 +127,10 @@ public class GameController : MonoBehaviour, IGameEventReceiver
                 break;
             case GameState.Play:
                 // デバッグモード解除時の死亡確認
-                // 死亡したらゲームオーバー(Debug Modeでなければ)
-                if (0 >= player.Life && !SettingInfo.DebugMode) GameStateProperty.SetState(GameState.GameOver);
+                if (false == SettingInfo.DebugMode)
+                {
+                    if (0 >= player.lifeReactiveProperty.Value) GameStateProperty.SetState(GameState.GameOver);
+                }
                 break;
             case GameState.GameOver:
                  break;
@@ -251,4 +256,32 @@ public class GameController : MonoBehaviour, IGameEventReceiver
         // カーソルを表示する
         Cursor.visible = true;
     }
+
+    // 監視対象のLife変化時
+    public void ChangePlayerLife(int life)
+    {
+        if (0 >= life)
+        {
+            if (false == SettingInfo.DebugMode) // デバッグモードだったらそのまま
+            {
+                // ライフ0になったらGameOver状態へ遷移する
+                GameStateProperty.SetState(GameState.GameOver);
+            }
+        }
+        return;
+    }
+
+    public void ChangeHouseLife(int life)
+    {
+        if (0 >= life)
+        {
+            if (false == SettingInfo.DebugMode) // デバッグモードだったらそのまま
+            {
+                // ライフ0になったらGameOver状態へ遷移する
+                GameStateProperty.SetState(GameState.GameOver);
+            }
+        }
+        return;
+    }
+
 }

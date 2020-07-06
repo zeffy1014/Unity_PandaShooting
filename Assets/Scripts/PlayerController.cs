@@ -29,8 +29,11 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
 
     public GameObject damageEffect;
 
+    // ライフ関連 ReactivePropertyで監視できるようにする
     public int defaultLife = 5;
-    public int Life { get; set; }
+    private ReactiveProperty<int> _lifeReactiveProperty = new ReactiveProperty<int>(default);
+    public IReadOnlyReactiveProperty<int> lifeReactiveProperty { get { return _lifeReactiveProperty; } }
+
     public bool Playing { get; set; } = false;
 
     public LifePanel lifePanel;
@@ -93,7 +96,8 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
                   "right-top:("   + borderRect.xMax.ToString("f1") + ", " + borderRect.yMax.ToString("f1") + ")");
          */
 
-        Life = defaultLife;
+        _lifeReactiveProperty.Value = defaultLife;
+
         audioSource = GetComponent<AudioSource>();
 
         gameController = GameObject.FindWithTag("GameController");
@@ -167,21 +171,23 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
 
             Destroy(other.gameObject);
 
-            Life--;
-            lifePanel.UpdateLife(Life);
+            _lifeReactiveProperty.Value--;
+            lifePanel.UpdateLife(lifeReactiveProperty.Value);
 
             // コンボ切れる
             EventHandlerExtention.SendEvent(new BreakComboEventData());
 
-            // ライフ無くなったらGameOver状態へ遷移
-            if (0 >= Life)
+            // ライフ無くなったらGameOver状態へ遷移 -> ライフをGameControllerが監視して処理する
+            /*
+            if (0 >= lifeReactiveProperty.Value)
             {
                 if (false == SettingInfo.DebugMode)
                 {
-                    GameStateProperty.SetState(GameState.GameOver);
+                    //GameStateProperty.SetState(GameState.GameOver);
                     EventHandlerExtention.SendEvent(new GameOverEventData());
                 }
             }
+            */
 
             // TODO:一定時間無敵にする
 
@@ -394,8 +400,8 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
         Instantiate(damageEffect, transform.position, Quaternion.identity);
 
         // ライフゼロになって強制終了
-        Life = 0;
-        lifePanel.UpdateLife(Life);
+        _lifeReactiveProperty.Value = 0;
+        lifePanel.UpdateLife(lifeReactiveProperty.Value);
         gameObject.SetActive(false);
     }
 
