@@ -49,11 +49,10 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
     GameObject gameController;
 
     // 移動範囲制限のための範囲設定
-    Rect borderRect = new Rect();       //画面範囲用の矩形
+    public GameArea gameArea;           // 画面範囲の元となるmask画像
+    Rect borderRect = new Rect();       // 移動範囲用の矩形
     static float borderRatioV = 0.95f; //画面端に対する調整率(水平)
-    static float borderRatioH = 0.85f; //画面端に対する調整率(垂直)
-    public GameObject leftWall;         //左側の壁
-    public GameObject rightWall;        //右側の壁
+    static float borderRatioH = 0.95f; //画面端に対する調整率(垂直)
 
     // 右クリック操作用
     Vector2 startRightClickPos = Vector2.zero;
@@ -84,12 +83,14 @@ public class PlayerController : MonoBehaviour, IGameEventReceiver
     /***** MonoBehaviourイベント処理 ****************************************************/
     private void Start()
     {
-        // 画面範囲設定(動的に) 垂直方向はスクリーン上下、水平方向は左右の壁
-        borderRect.yMin = Camera.main.ViewportToWorldPoint(new Vector3(0, 0, 0)).y * borderRatioH;
-        borderRect.yMax = Camera.main.ViewportToWorldPoint(new Vector3(1, 1, 0)).y * borderRatioH;
-        float borderShrinkV = (rightWall.transform.position.x - leftWall.transform.position.x) * (1.0f - borderRatioV);
-        borderRect.xMin = leftWall.transform.position.x + borderShrinkV;
-        borderRect.xMax = rightWall.transform.position.x - borderShrinkV;
+        // 画面範囲設定: gameAreaを一定範囲狭めて移動範囲とする
+        borderRect = gameArea.GetGameAreaRect();
+        float borderShrinkV = (borderRect.xMax - borderRect.xMin) * (1.0f - borderRatioV);
+        float borderShrinkH = (borderRect.yMax - borderRect.yMin) * (1.0f - borderRatioH);
+        borderRect.xMin += borderShrinkV;
+        borderRect.xMax -= borderShrinkV;
+        borderRect.yMin += borderShrinkH;
+        borderRect.yMax -= borderShrinkH;
 
         /*
         Debug.Log("left-bottom:(" + borderRect.xMin.ToString("f1") + ", " + borderRect.yMin.ToString("f1") + "), " + 
